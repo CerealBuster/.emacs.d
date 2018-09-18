@@ -233,6 +233,16 @@ we want to auto update our packages
 
 #+END_SRC
 
+** winner mode
+
+Allows to ‘undo’ (and ‘redo’) changes in the window configuration with
+the key commands ‘C-c left’ and ‘C-c right’.
+
+#+BEGIN_SRC emacs-lisp
+  (when (fboundp 'winner-mode)
+    (winner-mode 1))
+#+END_SRC
+
 * Evil
 
 #+BEGIN_SRC emacs-lisp
