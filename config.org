@@ -355,10 +355,11 @@ the key commands ‘C-c left’ and ‘C-c right’.
 *** solarized
 
 #+BEGIN_SRC emacs-lisp
-        (use-package solarized-theme
-          :ensure t
-          :defer t
-          :init (load-theme 'solarized-dark t))
+  (use-package solarized-theme
+    :ensure t
+    :defer t
+    :init (load-theme 'solarized-dark t))
+
 #+END_SRC
 
 *** zenburn
@@ -443,6 +444,32 @@ the key commands ‘C-c left’ and ‘C-c right’.
     (load-theme 'airline-solarized-gui t))
 
 #+END_SRC
+
+
+
+** Custom function for solarized
+
+Since i like to switch between the solarized light and dark theme i
+made this little toggle function which loads the solarized theme and
+then also loads the airline theme again so the modeline is not messed
+up :-)
+
+#+BEGIN_SRC emacs-lisp
+  (setq active-theme 'solarized-light)
+
+  (defun toggle-solarized-theme ()
+    (interactive)
+    (if (eq active-theme 'solarized-dark)
+        (setq active-theme 'solarized-light)
+      (setq active-theme 'solarized-dark))
+    (load-theme active-theme t)
+    (load-theme 'airline-solarized-gui t))
+
+  (toggle-solarized-theme)
+
+  (global-set-key (kbd "<f6>") 'toggle-solarized-theme)
+#+END_SRC
+
 
 * Dashboard
 
