@@ -508,6 +508,7 @@ up :-)
 * mu4e
 
 #+BEGIN_SRC emacs-lisp
+  (require 'smtpmail)
 
   (setq auth-sources '("~/.authinfo.gpg"))
 
@@ -525,62 +526,61 @@ up :-)
       (setq message-kill-buffer-on-exit t)
       (setq mu4e-context-policy 'pick-first)
       (setq mu4e-contexts
-         (list (make-mu4e-context
+            `( ,(make-mu4e-context
                  :name "ZHAW"
                  :enter-func (lambda() (mu4e-message "Switch to ZHAW"))
                  :match-func (lambda(msg)
                                (when msg
-                                  (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
-                :vars '((user-mail-address . "affolraf@students.zhaw.ch")
-                        (mu4e-sent-folder . "/ZHAW/Gesendete Elemente")
-                        (mu4e-drafts-folder . "/ZHAW/Drafts")
-                        (mu4e-trash-folder . "/ZHAW/Trash")
-                        (smtpmail-default-smtp-server . "smtps.zhaw.ch")
-                        (smtpmail-smtp-server . "smtps.zhaw.ch")
-                        (smtpmail-local-domain . "zhaw.ch")
-                        (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
-                        (smtpmail-stream-type . starttls)
-                        (smtpmail-smtp-service . 587)))
-                (make-mu4e-context
+                                 (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
+                 :vars '((user-mail-address . "affolraf@students.zhaw.ch")
+                         (mu4e-sent-folder . "/ZHAW/Gesendete Elemente")
+                         (mu4e-drafts-folder . "/ZHAW/Drafts")
+                         (mu4e-trash-folder . "/ZHAW/Trash")
+                         (smtpmail-default-smtp-server . "smtps.zhaw.ch")
+                         (smtpmail-smtp-server . "smtps.zhaw.ch")
+                         (smtpmail-local-domain . "zhaw.ch")
+                         (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
+                         (smtpmail-stream-type . starttls)
+                         (smtpmail-smtp-service . 587)))
+               ,(make-mu4e-context
                  :name "Outlook"
                  :enter-func (lambda() (mu4e-message "Switch to Outlook"))
                  :match-func (lambda(msg)
                                (when msg
-                                  (s-prefix? "/Outlook/" (mu4e-message-field msg :maildir))))
-                :vars '((user-mail-address . "raffael.affolter@outlook.com")
-                        (mu4e-sent-folder . "/Outlook/Sent")
-                        (mu4e-drafts-folder . "/Outlook/Drafts")
-                        (mu4e-trash-folder . "/Outlook/Trash")
-                        (smtpmail-default-smtp-server . "smtp.office365.com")
-                        (smtpmail-smtp-server . "smtp.office365.com")
-                        (smtpmail-local-domain . "outlook.com")
-                        (smtpmail-smtp-user . "raffael.affolter@hotmail.com")
-                        (smtpmail-stream-type . starttls)
-                        (smtpmail-smtp-service . 587)
-                        (mu4e-sent-messages-behavior . delete)
-                        (mu4e-sent-messages-behavior . delete)))
-  (make-mu4e-context
+                                 (s-prefix? "/Outlook/" (mu4e-message-field msg :maildir))))
+                 :vars '((user-mail-address . "raffael.affolter@outlook.com")
+                         (mu4e-sent-folder . "/Outlook/Sent")
+                         (mu4e-drafts-folder . "/Outlook/Drafts")
+                         (mu4e-trash-folder . "/Outlook/Trash")
+                         (smtpmail-default-smtp-server . "smtp.office365.com")
+                         (smtpmail-smtp-server . "smtp.office365.com")
+                         (smtpmail-local-domain . "outlook.com")
+                         (smtpmail-smtp-user . "raffael.affolter@hotmail.com")
+                         (smtpmail-stream-type . starttls)
+                         (smtpmail-smtp-service . 587)
+                         (mu4e-sent-messages-behavior . delete)
+                         (mu4e-sent-messages-behavior . delete)))
+               ,(make-mu4e-context
                  :name "UZH"
                  :enter-func (lambda() (mu4e-message "Switch to UZH"))
                  :match-func (lambda(msg)
                                (when msg
-                                  (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
-                :vars '((user-mail-address . "raffael.affolter@uzh.ch")
-                        (mu4e-sent-folder . "/UZH/Gesendet")
-                        (mu4e-drafts-folder . "/UZH/Drafts")
-                        (mu4e-trash-folder . "/UZH/Trash")
-                        (smtpmail-default-smtp-server . "smtp.uzh.ch")
-                        (smtpmail-smtp-server . "smtp.uzh.ch")
-                        (smtpmail-local-domain . "uzh.ch")
-                        (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
-                        (smtpmail-stream-type . starttls)
-                        (smtpmail-smtp-service . 587)))))
+                                 (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
+                 :vars '((user-mail-address . "raffael.affolter@uzh.ch")
+                         (mu4e-sent-folder . "/UZH/Gesendet")
+                         (mu4e-drafts-folder . "/UZH/Drafts")
+                         (mu4e-trash-folder . "/UZH/Trash")
+                         (smtpmail-default-smtp-server . "smtp.uzh.ch")
+                         (smtpmail-smtp-server . "smtp.uzh.ch")
+                         (smtpmail-local-domain . "uzh.ch")
+                         (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
+                         (smtpmail-stream-type . starttls)
+                         (smtpmail-smtp-service . 587)))))
 
-      (add-hook 'message-mode-hook 'turn-on-orgtbl)
-      (add-hook 'message-mode-hook 'turn-on-orgstruct++)
-      (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
-      (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "deutsch"))))
-
+  (add-hook 'message-mode-hook 'turn-on-orgtbl)
+  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+  (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "deutsch"))))
 #+END_SRC
 
 * flyspell
