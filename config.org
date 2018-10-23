@@ -687,6 +687,17 @@ we want koma script
 
 #+END_SRC
 
+** Org-Journal
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-journal
+    :defer t
+    :ensure t
+    :config
+    (setq org-journal-dir "~/Dokumente/org-docs/journals")
+    (setq org-journal-file-format "%Y%m%d.org"))
+#+END_SRC
+
 * Latex
 
 #+BEGIN_SRC emacs-lisp
