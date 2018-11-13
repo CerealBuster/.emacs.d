@@ -227,11 +227,21 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package auto-complete
+  (use-package company
     :ensure t
-    :defer auto-complete-mode
-    :config (ac-config-default))
+    :diminish company-mode
+    :config
+    (global-company-mode))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+
+  ;(use-package company-quickhelp
+   ; :ensure t
+   ; :diminish company-quickhelp-mode
+   ; :config
+   ; (company-quickhelp-mode)
+  ;)
 #+END_SRC
 
 
@@ -850,7 +860,10 @@ highlight all characters which are over the column 80
 #+BEGIN_SRC emacs-lisp
 
   (use-package cider
-    :ensure t)
+    :ensure t
+    :config
+    (add-hook 'cider-mode-hook #'eldoc-mode)
+    )
 
   (setq cider-cljs-lein-repl
     "(do (require 'figwheel-sidecar.repl-api)
