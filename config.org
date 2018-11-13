@@ -703,9 +703,9 @@ we want koma script
   (use-package org-journal
     :defer t
     :ensure t
-    :config
-    (setq org-journal-dir "~/Dokumente/org-docs/journals")
-    (setq org-journal-file-format "%Y%m%d.org"))
+    :init
+    (setq org-journal-dir "~/Dokumente/org-documents/journals")
+    (setq org-journal-file-format "%d-%m-%Y.org"))
 #+END_SRC
 
 * Latex
