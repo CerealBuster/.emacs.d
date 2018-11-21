@@ -806,7 +806,7 @@ highlight all characters which are over the column 80
 #+BEGIN_SRC emacs-lisp
 
   (require 'whitespace)
-  (setq whitespace-line-column 80)
+  (setq whitespace-line-column 100)
   (setq whitespace-style '(face lines-tail))
 
   (add-hook 'prog-mode-hook 'whitespace-mode)
