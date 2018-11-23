@@ -227,11 +227,21 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package auto-complete
+  (use-package company
     :ensure t
-    :defer auto-complete-mode
-    :config (ac-config-default))
+    :diminish company-mode
+    :config
+    (global-company-mode))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+
+  ;(use-package company-quickhelp
+   ; :ensure t
+   ; :diminish company-quickhelp-mode
+   ; :config
+   ; (company-quickhelp-mode)
+  ;)
 #+END_SRC
 
 
@@ -703,9 +713,9 @@ we want koma script
   (use-package org-journal
     :defer t
     :ensure t
-    :config
+    :init
     (setq org-journal-dir "~/Dokumente/org-documents/journals")
-    (setq org-journal-file-format "%Y%m%d.org"))
+    (setq org-journal-file-format "%d-%m-%Y.org"))
 #+END_SRC
 
 * Latex
@@ -796,7 +806,7 @@ highlight all characters which are over the column 80
 #+BEGIN_SRC emacs-lisp
 
   (require 'whitespace)
-  (setq whitespace-line-column 80)
+  (setq whitespace-line-column 100)
   (setq whitespace-style '(face lines-tail))
 
   (add-hook 'prog-mode-hook 'whitespace-mode)
@@ -850,7 +860,10 @@ highlight all characters which are over the column 80
 #+BEGIN_SRC emacs-lisp
 
   (use-package cider
-    :ensure t)
+    :ensure t
+    :config
+    (add-hook 'cider-mode-hook #'eldoc-mode)
+    )
 
   (setq cider-cljs-lein-repl
     "(do (require 'figwheel-sidecar.repl-api)
