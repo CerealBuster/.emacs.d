@@ -266,6 +266,15 @@ the key commands ‘C-c left’ and ‘C-c right’.
 
 #+END_SRC
 
+** Start in fullscreen
+
+I want that emacs opens in fullscreen
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables
+   '(initial-frame-alist (quote ((fullscreen . maximized)))))
+#+End_SRC
+
+
 * Evil
 
 #+BEGIN_SRC emacs-lisp
