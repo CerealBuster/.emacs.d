@@ -613,7 +613,10 @@ we want flyspell to be enabled by default in text org and latex files
 #+END_SRC
 
 * Org-Mode Settings
-
+** configure latex compiler
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-compiler "xelatex")
+#+END_SRC
 ** configure pdflatex
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-pdf-process
