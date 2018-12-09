@@ -266,6 +266,15 @@ the key commands ‘C-c left’ and ‘C-c right’.
 
 #+END_SRC
 
+** Start in fullscreen
+
+I want that emacs opens in fullscreen
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables
+   '(initial-frame-alist (quote ((fullscreen . maximized)))))
+#+End_SRC
+
+
 * Evil
 
 #+BEGIN_SRC emacs-lisp
@@ -604,14 +613,17 @@ we want flyspell to be enabled by default in text org and latex files
 #+END_SRC
 
 * Org-Mode Settings
-
+** configure latex compiler
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-compiler "xelatex")
+#+END_SRC
 ** configure pdflatex
 #+BEGIN_SRC emacs-lisp
   (setq org-latex-pdf-process
-        '("pdflatex -interaction nonstopmode -output-directory %o %f"
+        '("xelatex -interaction nonstopmode %f"
           "bibtex %b"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"))
+          "xelatex -interaction nonstopmode %f"
+          "xelatex -interaction nonstopmode %f"))
 #+END_SRC
 
 ** Enable native intendations in sourc blocks
@@ -806,7 +818,7 @@ highlight all characters which are over the column 80
 #+BEGIN_SRC emacs-lisp
 
   (require 'whitespace)
-  (setq whitespace-line-column 80)
+  (setq whitespace-line-column 100)
   (setq whitespace-style '(face lines-tail))
 
   (add-hook 'prog-mode-hook 'whitespace-mode)
