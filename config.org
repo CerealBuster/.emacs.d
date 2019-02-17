@@ -831,21 +831,22 @@ highlight all characters which are over the column 80
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package paredit
-    :ensure t
-    :diminish paredit-mode
-    :init
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-    (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook 'enable-paredit-mode)
-    (add-hook 'json-mode-hook 'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-    (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'slime-repl-mode-hook 'enable-paredit-mode))
+    (use-package paredit
+      :ensure t
+      :diminish paredit-mode
+      :init
+      (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+      (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+      (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+      (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+      (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+      (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+      (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+      (add-hook 'json-mode-hook 'enable-paredit-mode)
+      (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+      (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
+      (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
+      (add-hook 'ess-mode-hook 'enable-paredit-mode))
 #+END_SRC
 
 ** LISP settings
@@ -950,6 +951,13 @@ We want a good racket workspace
 
 #+END_SRC
 
+** ESS
+we use ESS for R
+#+BEGIN_SRC emacs-lisp
+  (use-package ess
+    :ensure t
+    :init (require 'ess-site))
+#+END_SRC
 * Golden Ratio
 
 #+BEGIN_SRC emacs-lisp
