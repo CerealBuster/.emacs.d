@@ -687,7 +687,7 @@ we want koma script
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq org-agenda-files '("~/Dokumente/"))
+  (setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
 
 #+END_SRC
 
@@ -730,6 +730,21 @@ we want koma script
     (setq org-journal-dir "~/Dokumente/org-documents/journals")
     (setq org-journal-file-format "%d-%m-%Y.org"))
 #+END_SRC
+
+** Org-Projects
+here are my project settings
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-project-alist
+
+        '(("blog"
+           :base-directory "~/git/blog/org"
+           :base-extension "org"
+           :publishing-directory "~/git/blog/_posts/"
+           :recursive t
+           :publishing-function org-md-publish-to-md
+           :headline-levels 4)))
+#+END_SRC
+
 
 * Latex
 
