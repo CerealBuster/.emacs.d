@@ -229,8 +229,9 @@ we want to auto update our packages
 
   (use-package company
     :ensure t
+    :defer t
     :diminish company-mode
-    :config
+    :init
     (global-company-mode))
 #+END_SRC
 
@@ -881,7 +882,6 @@ highlight all characters which are over the column 80
     "(do (require 'figwheel-sidecar.repl-api)
            (figwheel-sidecar.repl-api/start-figwheel!)
            (figwheel-sidecar.repl-api/cljs-repl))")
-
 #+END_SRC
 
 ** SLIME
