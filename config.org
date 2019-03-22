@@ -14,38 +14,44 @@ I don't want that every minor mode is cluttering my modeline
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package exwm
-    :ensure t
-    :config
-    (require 'exwm-config)
-                                          ;   (exwm-config-default)
-    (setq exwm-workspace-number 4)
-    (require 'exwm-systemtray)
-    (exwm-systemtray-enable)
-    (setq exwm-systemtray-height 16)
-    (setq exwm-input-global-keys
-          `(
-            ;; Bind "s-r" to exit char-mode and fullscreen mode.
-            ([?\s-r] . exwm-reset)
-            ;; Bind "s-w" to switch workspace interactively.
-            ([?\s-w] . exwm-workspace-switch)
-            ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
-            ,@(mapcar (lambda (i)
-                        `(,(kbd (format "s-%d" i)) .
-                          (lambda ()
-                            (interactive)
-                            (exwm-workspace-switch-create ,i))))
-                      (number-sequence 0 9))
-            ;; Bind "s-&" to launch applications ('M-&' also works if the output
-            ;; buffer does not bother you).
-            ([?\s-&] . (lambda (command)
-                         (interactive (list (read-shell-command "$ ")))
-                         (start-process-shell-command command nil command)))
-            ;; Bind "s-<f2>" to "slock", a simple X display locker.
-            ([s-f2] . (lambda ()
-                        (interactive)
-                        (start-process "" nil "/usr/bin/slock"))))))
+    (use-package exwm
+      :ensure t
+      :init
+      (require 'exwm-config)
+                                            ;   (exwm-config-default)
+  :config
+      (setq exwm-workspace-number 4)
+      (require 'exwm-systemtray)
+      (exwm-systemtray-enable)
+      (setq exwm-systemtray-height 30)
+      (setq exwm-input-global-keys
+            `(
+              ;; Bind "s-r" to exit char-mode and fullscreen mode.
+              ([?\s-r] . exwm-reset)
+              ;; Bind "s-w" to switch workspace interactively.
+              ([?\s-w] . exwm-workspace-switch)
+              ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+              ,@(mapcar (lambda (i)
+                          `(,(kbd (format "s-%d" i)) .
+                            (lambda ()
+                              (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 9))
+              ;; Bind "s-&" to launch applications ('M-&' also works if the output
+              ;; buffer does not bother you).
+              ([?\s-&] . (lambda (command)
+                           (interactive (list (read-shell-command "$ ")))
+                           (start-process-shell-command command nil command)))
+              ;; Bind "s-<f2>" to "slock", a simple X display locker.
+              ([s-f2] . (lambda ()
+                          (interactive)
+                          (start-process "" nil "/usr/bin/slock")))
+              ([?\s-p] . helm-run-external-command)
+              ([?\s-:] . evil-ex))))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 * desktop-environment
 
@@ -847,7 +853,10 @@ highlight all characters which are over the column 80
   (diminish 'whitespace-mode)
 #+END_SRC
 
-
+Use python3 as default
+#+BEGIN_SRC  emacs-lisp
+  (setq python-shell-interpreter "python3")
+#+END_SRC
 
 ** Paredit
 
@@ -983,7 +992,7 @@ we use ESS for R
 #+BEGIN_SRC emacs-lisp
   (use-package ess
     :ensure t
-    :init (require 'ess-site))
+    :defer t)
 #+END_SRC
 * Golden Ratio
 
