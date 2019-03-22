@@ -745,6 +745,12 @@ here are my project settings
            :headline-levels 4)))
 #+END_SRC
 
+** ob-hy
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-hy
+    :ensure t
+    :defer t)
+#+END_SRC
 
 * Latex
 
