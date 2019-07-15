@@ -256,8 +256,8 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
-  (when (member "hack" (font-family-list))
-    (set-face-attribute 'default nil :font "hack"))
+  (when (member "Hack" (font-family-list))
+    (set-face-attribute 'default nil :font "Hack" :height 110))
 
 #+END_SRC
 
@@ -387,7 +387,7 @@ I want that emacs opens in fullscreen
 
   ;(use-package color-theme :ensure t)
 
-  ;(load-theme 'tango-dark t)
+  (load-theme 'tango-dark t)
 #+END_SRC
 
 *** solarized
@@ -396,8 +396,8 @@ I want that emacs opens in fullscreen
   (use-package solarized-theme
     :ensure t
     :defer t
-    :init (load-theme 'solarized-dark t))
-
+   ; :init (load-theme 'solarized-dark t)
+    )
 #+END_SRC
 
 *** zenburn
@@ -479,33 +479,33 @@ I want that emacs opens in fullscreen
           airline-utf-glyph-readonly            #xe0a2
           airline-utf-glyph-linenumber          #xe0a1)
     :config
-    (load-theme 'airline-solarized-gui t))
-
+   ;; (load-theme 'airline-solarized-gui t)
+    (load-theme 'airline-wombat t))
 #+END_SRC
 
 
 
-** Custom function for solarized
+** Custom function for dark and light themes
 
-Since i like to switch between the solarized light and dark theme i
-made this little toggle function which loads the solarized theme and
+Since i like to switch between the solarized/tango light and dark theme i
+made this little toggle function which loads the solarized/tango theme and
 then also loads the airline theme again so the modeline is not messed
 up :-)
 
 #+BEGIN_SRC emacs-lisp
-  (setq active-theme 'solarized-light)
+  (setq active-theme 'tango-dark)
 
-  (defun toggle-solarized-theme ()
+  (defun toggle-light-theme ()
     (interactive)
-    (if (eq active-theme 'solarized-dark)
-        (setq active-theme 'solarized-light)
-      (setq active-theme 'solarized-dark))
+    (if (eq active-theme 'tango-dark)
+        (setq active-theme 'tango)
+      (setq active-theme 'tango-dark))
     (load-theme active-theme t)
-    (load-theme 'airline-solarized-gui t))
+    (load-theme 'airline-wombat t))
 
-  (toggle-solarized-theme)
+  ;;(toggle-light-theme)
 
-  (global-set-key (kbd "<f6>") 'toggle-solarized-theme)
+  (global-set-key (kbd "<f6>") 'toggle-light-theme)
 #+END_SRC
 
 
@@ -877,7 +877,7 @@ Use python3 as default
     (add-hook 'scheme-mode-hook 'enable-paredit-mode)
     (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
     (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'ess-mode-hook 'enable-paredit-mode)
+  ;;  (add-hook 'ess-mode-hook 'enable-paredit-mode)
     (add-hook 'hy-mode-hook 'enable-paredit-mode))
 #+END_SRC
 
