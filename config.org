@@ -638,7 +638,7 @@ we want flyspell to be enabled by default in text org and latex files
 #+BEGIN_SRC emacs-lisp
 
   (setq org-src-tab-acts-natively t)
-
+  (setq org-src-preserve-indentation t)
 #+END_SRC
 
 ** KOMA-SCRIPT
