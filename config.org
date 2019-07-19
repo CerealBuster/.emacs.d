@@ -758,6 +758,18 @@ here are my project settings
     :defer t)
 #+END_SRC
 
+** org-babel
+This languages shoud be loaded when creating code
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (clojure . t)
+     (hy . t)
+     (scheme . t)
+     (R . t)))
+#+END_SRC
+
 * Latex
 
 #+BEGIN_SRC emacs-lisp
