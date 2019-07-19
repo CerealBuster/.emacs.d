@@ -764,12 +764,14 @@ This languages shoud be loaded when creating code
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t)
-     (python3 . t)
      (clojure . t)
      (hy . t)
      (scheme . t)
      (R . t)))
+
+  (setq org-babel-python-command "python3")
 #+END_SRC
+
 
 * Latex
 
