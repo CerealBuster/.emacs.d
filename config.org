@@ -638,7 +638,7 @@ we want flyspell to be enabled by default in text org and latex files
 #+BEGIN_SRC emacs-lisp
 
   (setq org-src-tab-acts-natively t)
-
+  (setq org-src-preserve-indentation t)
 #+END_SRC
 
 ** KOMA-SCRIPT
@@ -757,6 +757,21 @@ here are my project settings
     :ensure t
     :defer t)
 #+END_SRC
+
+** org-babel
+This languages shoud be loaded when creating code
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (clojure . t)
+     (hy . t)
+     (scheme . t)
+     (R . t)))
+
+  (setq org-babel-python-command "python3")
+#+END_SRC
+
 
 * Latex
 
