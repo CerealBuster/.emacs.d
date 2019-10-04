@@ -873,6 +873,13 @@ Use python3 as default
   (setq python-shell-interpreter "python3")
 #+END_SRC
 
+** realgud
+
+#+BEGIN_SRC  emacs-lisp
+  (use-package realgud
+    :ensure t)
+#+END_SRC
+
 ** Paredit
 
 #+BEGIN_SRC emacs-lisp
@@ -922,8 +929,7 @@ Use python3 as default
   (use-package cider
     :ensure t
     :config
-    (add-hook 'cider-mode-hook #'eldoc-mode)
-    )
+    (add-hook 'cider-mode-hook #'eldoc-mode))
 
   (setq cider-cljs-lein-repl
     "(do (require 'figwheel-sidecar.repl-api)
@@ -986,11 +992,7 @@ We want a good racket workspace
   (use-package rainbow-delimiters
     :ensure t
     :init (progn
-            (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-            (add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)))
-
-  (rainbow-delimiters-mode)
-
+            (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)))
 #+END_SRC
 
 ** Yaml
@@ -1007,8 +1009,14 @@ we use ESS for R
 #+BEGIN_SRC emacs-lisp
   (use-package ess
     :ensure t
-    :defer t)
+    :defer t
+    :init
+    (electric-pair-mode 1))
 #+END_SRC
+
+#+RESULTS:
+: t
+
 * Golden Ratio
 
 #+BEGIN_SRC emacs-lisp
