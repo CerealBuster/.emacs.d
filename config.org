@@ -559,12 +559,12 @@ up :-)
                                (when msg
                                  (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
                  :vars '((user-mail-address . "affolraf@students.zhaw.ch")
-                         (mu4e-sent-folder . "/ZHAW/Gesendete Elemente")
+                         (mu4e-sent-folder . "/ZHAW/Sent")
                          (mu4e-drafts-folder . "/ZHAW/Drafts")
                          (mu4e-trash-folder . "/ZHAW/Trash")
-                         (smtpmail-default-smtp-server . "smtps.zhaw.ch")
-                         (smtpmail-smtp-server . "smtps.zhaw.ch")
-                         (smtpmail-local-domain . "zhaw.ch")
+                         (smtpmail-default-smtp-server . "smtp.office365.com")
+                         (smtpmail-smtp-server . "smtp.office365.com")
+                         (smtpmail-local-domain . "office365.com")
                          (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
                          (smtpmail-stream-type . starttls)
                          (smtpmail-smtp-service . 587)))
@@ -767,7 +767,8 @@ This languages shoud be loaded when creating code
      (clojure . t)
      (hy . t)
      (scheme . t)
-     (R . t)))
+     (R . t)
+     (ein .t )))
 
   (setq org-babel-python-command "python3")
 #+END_SRC
@@ -903,6 +904,7 @@ Use python3 as default
     (add-hook 'hy-mode-hook 'enable-paredit-mode))
 #+END_SRC
 
+
 ** LISP settings
 
 #+BEGIN_SRC emacs-lisp
@@ -1016,6 +1018,18 @@ we use ESS for R
 
 #+RESULTS:
 : t
+
+** Jupyter support
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t
+  :defer t
+  :init
+  (electric-pair-mode 0))
+#+END_SRC
+
+#+RESULTS:
 
 * Golden Ratio
 
