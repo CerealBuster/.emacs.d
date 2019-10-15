@@ -6,48 +6,47 @@
 I don't want that every minor mode is cluttering my modeline
 
 #+BEGIN_SRC emacs-lisp
-  (use-package diminish
-    :ensure t)
+(use-package diminish
+  :ensure t)
 #+END_SRC
 
 * EXWM
 
 #+BEGIN_SRC emacs-lisp
-
-    (use-package exwm
-      :ensure t
-      :init
-      (require 'exwm-config)
-                                            ;   (exwm-config-default)
+(use-package exwm
+  :ensure t
+  :init
+  (require 'exwm-config)
+                                        ;   (exwm-config-default)
   :config
-      (setq exwm-workspace-number 4)
-      (require 'exwm-systemtray)
-      (exwm-systemtray-enable)
-      (setq exwm-systemtray-height 30)
-      (setq exwm-input-global-keys
-            `(
-              ;; Bind "s-r" to exit char-mode and fullscreen mode.
-              ([?\s-r] . exwm-reset)
-              ;; Bind "s-w" to switch workspace interactively.
-              ([?\s-w] . exwm-workspace-switch)
-              ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
-              ,@(mapcar (lambda (i)
-                          `(,(kbd (format "s-%d" i)) .
-                            (lambda ()
-                              (interactive)
-                              (exwm-workspace-switch-create ,i))))
-                        (number-sequence 0 9))
-              ;; Bind "s-&" to launch applications ('M-&' also works if the output
-              ;; buffer does not bother you).
-              ([?\s-&] . (lambda (command)
-                           (interactive (list (read-shell-command "$ ")))
-                           (start-process-shell-command command nil command)))
-              ;; Bind "s-<f2>" to "slock", a simple X display locker.
-              ([s-f2] . (lambda ()
+  (setq exwm-workspace-number 4)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable)
+  (setq exwm-systemtray-height 30)
+  (setq exwm-input-global-keys
+        `(
+          ;; Bind "s-r" to exit char-mode and fullscreen mode.
+          ([?\s-r] . exwm-reset)
+          ;; Bind "s-w" to switch workspace interactively.
+          ([?\s-w] . exwm-workspace-switch)
+          ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+          ,@(mapcar (lambda (i)
+                      `(,(kbd (format "s-%d" i)) .
+                        (lambda ()
                           (interactive)
-                          (start-process "" nil "/usr/bin/slock")))
-              ([?\s-p] . helm-run-external-command)
-              ([?\s-:] . evil-ex))))
+                          (exwm-workspace-switch-create ,i))))
+                    (number-sequence 0 9))
+          ;; Bind "s-&" to launch applications ('M-&' also works if the output
+          ;; buffer does not bother you).
+          ([?\s-&] . (lambda (command)
+                       (interactive (list (read-shell-command "$ ")))
+                       (start-process-shell-command command nil command)))
+          ;; Bind "s-<f2>" to "slock", a simple X display locker.
+          ([s-f2] . (lambda ()
+                      (interactive)
+                      (start-process "" nil "/usr/bin/slock")))
+          ([?\s-p] . helm-run-external-command)
+          ([?\s-:] . evil-ex))))
 #+END_SRC
 
 #+RESULTS:
@@ -56,11 +55,10 @@ I don't want that every minor mode is cluttering my modeline
 * desktop-environment
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package desktop-environment
-    :ensure t
-    :diminish desktop-environment-mode
-    :config (desktop-environment-mode))
+(use-package desktop-environment
+  :ensure t
+  :diminish desktop-environment-mode
+  :config (desktop-environment-mode))
 #+END_SRC
 
 * auto-package-update
@@ -68,157 +66,124 @@ I don't want that every minor mode is cluttering my modeline
 we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package auto-package-update
-    :ensure t
-    :config
-    (setq auto-package-update-delete-old-versions t)
-    (setq auto-package-update-hide-results t)
-    (auto-package-update-maybe))
+(use-package auto-package-update
+  :ensure t
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  (auto-package-update-maybe))
 
 #+END_SRC
-
 
 * Default settings
 
 ** UTF-8 Please
 
 #+BEGIN_SRC emacs-lisp
-
-  (set-charset-priority 'unicode)
-  (setq locale-coding-system   'utf-8)   ; pretty
-  (set-terminal-coding-system  'utf-8)   ; pretty
-  (set-keyboard-coding-system  'utf-8)   ; pretty
-  (set-selection-coding-system 'utf-8)   ; please
-  (prefer-coding-system        'utf-8)   ; with sugar on top
-  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-
+(set-charset-priority 'unicode)
+(setq locale-coding-system   'utf-8)   ; pretty
+(set-terminal-coding-system  'utf-8)   ; pretty
+(set-keyboard-coding-system  'utf-8)   ; pretty
+(set-selection-coding-system 'utf-8)   ; please
+(prefer-coding-system        'utf-8)   ; with sugar on top
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 #+END_SRC
 
-** Garbace collection allow more than 20MB
+** Garbage collection allow more than 20MB
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq gc-cons-threshold 20000000)
-
+(setq gc-cons-threshold 20000000)
 #+END_SRC
 
 ** No backup files
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq make-backup-files nil)
-
+(setq make-backup-files nil)
 #+END_SRC
 
 ** Auto-Save in /tmp
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 #+END_SRC
 
 ** Always follow symlinks
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq vc-follow-symlinks t)
-
+(setq vc-follow-symlinks t)
 #+END_SRC
 
 ** Sentences have one space after a period
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq sentence-end-double-space nil)
-
+(setq sentence-end-double-space nil)
 #+END_SRC
 
 ** Confirm before closing Emacs
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq confirm-kill-emacs 'y-or-n-p)
-
+(setq confirm-kill-emacs 'y-or-n-p)
 #+END_SRC
 
 ** Ask y/n instead of yes/no
 
 #+BEGIN_SRC emacs-lisp
-
-  (fset 'yes-or-no-p 'y-or-n-p)
-
+(fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-** Autorevert files on change
+** Auto revert files on change
 
 #+BEGIN_SRC emacs-lisp
-
-  (global-auto-revert-mode t)
-
+(global-auto-revert-mode t)
 #+END_SRC
 
 
 ** Shortcut for changing font size
 
 #+BEGIN_SRC emacs-lisp
-
-  (define-key global-map (kbd "C-1") 'text-scale-increase)
-  (define-key global-map (kbd "C-0") 'text-scale-decrease)
-
+(define-key global-map (kbd "C-1") 'text-scale-increase)
+(define-key global-map (kbd "C-0") 'text-scale-decrease)
 #+END_SRC
 
 ** Disable startup message
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq inhibit-splash-screen t)
-  (setq inhibit-startup-message t)
-
+(setq inhibit-splash-screen t)
+(setq inhibit-startup-message t)
 #+END_SRC
 
-** no guit tooolbar
+** No GUI toolbar
 
 #+BEGIN_SRC emacs-lisp
-
-  (tool-bar-mode 0)
-
+(tool-bar-mode 0)
 #+END_SRC
 
 ** Automatic line Breaks
 
 #+BEGIN_SRC emacs-lisp
-
-  (add-hook 'text-mode-hook 'auto-fill-mode)
-
+(add-hook 'text-mode-hook 'auto-fill-mode)
 #+END_SRC
 
 ** Enable Narrow to region
 
 #+BEGIN_SRC emacs-lisp
-
-  (put 'narrow-to-region 'disabled nil)
-
+(put 'narrow-to-region 'disabled nil)
 #+END_SRC
 
-** We dont need scrollbars
+** We dont need scroll bars
 
 #+BEGIN_SRC emacs-lisp
-
-  (scroll-bar-mode -1)
-
+(scroll-bar-mode -1)
 #+END_SRC
 
 ** Remeber cursor position when reopening files
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq save-place-file "~/.emacs.d/saveplace")
-  (setq-default save-place t)
-
+(setq save-place-file "~/.emacs.d/saveplace")
+(setq-default save-place t)
 #+END_SRC
 
 ** no bell
@@ -273,7 +238,7 @@ the key commands ‘C-c left’ and ‘C-c right’.
 
 #+END_SRC
 
-** Start in fullscreen
+** Start in full screen
 
 I want that emacs opens in fullscreen
 #+BEGIN_SRC emacs-lisp
@@ -281,131 +246,115 @@ I want that emacs opens in fullscreen
    '(initial-frame-alist (quote ((fullscreen . maximized)))))
 #+End_SRC
 
-
 * Evil
 
 #+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  :config
+  (global-set-key (kbd "M-x")'execute-extended-command)
+  (evil-mode 1))
 
-  (use-package evil
-    :ensure t
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    :config
-    (global-set-key (kbd "M-x")'execute-extended-command)
-    (evil-mode 1))
-
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :config
-    (evil-collection-init))
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
 
 
-  (use-package evil-leader
-    :ensure t
-    :init (global-evil-leader-mode)
-    :config
-    (progn
-      (evil-leader/set-leader ",")
-      (evil-leader/set-key
-         "w" 'basic-save-buffer
-         "s" 'flyspell-buffer
-         "b" 'evil-buffer
-         "q" 'evil-quit)))
+(use-package evil-leader
+  :ensure t
+  :init (global-evil-leader-mode)
+  :config
+  (progn
+    (evil-leader/set-leader ",")
+    (evil-leader/set-key
+      "w" 'basic-save-buffer
+      "s" 'flyspell-buffer
+      "b" 'evil-buffer
+      "q" 'evil-quit)))
 
-  (use-package evil-magit
-    :ensure t)
+(use-package evil-magit
+  :ensure t)
 
-  (use-package evil-mu4e
-    :ensure t)
-  ;; don't show name in modeline
-  (diminish 'undo-tree-mode)
+(use-package evil-mu4e
+  :ensure t)
+;; don't show name in modeline
+(diminish 'undo-tree-mode)
 #+END_SRC
 
 * Projectile
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package projectile
-    :ensure t
-    :defer t
-    :config
-    (projectile-global-mode))
+(use-package projectile
+  :ensure t
+  :defer t
+  :config
+  (projectile-global-mode))
 
 #+END_SRC
 
 * Helm
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package helm
-    :ensure t
-    :diminish helm-mode
-    :init
-    (require 'helm-config)
-    :config
-    (helm-mode 1)
-    (setq helm-autoresize-mode t)
-    (setq helm-buffer-max-length 40)
-    (global-set-key (kbd "M-x") #'helm-M-x)
-    (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
-    (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :init
+  (require 'helm-config)
+  :config
+  (helm-mode 1)
+  (setq helm-autoresize-mode t)
+  (setq helm-buffer-max-length 40)
+  (global-set-key (kbd "M-x") #'helm-M-x)
+  (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
+  (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
 #+END_SRC
 
 ** Helm projectile
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package helm-projectile
-    :bind (("C-S-P" . helm-projectile-switch-project)
-           :map evil-normal-state-map
-           ("C-p" . helm-projectile))
-    :ensure t
-    :config
-    (evil-leader/set-key
-      "ps" 'helm-projectile-ag
-      "pa" 'helm-projectile-find-file-in-known-projects))
-
+(use-package helm-projectile
+  :bind (("C-S-P" . helm-projectile-switch-project)
+         :map evil-normal-state-map
+         ("C-p" . helm-projectile))
+  :ensure t
+  :config
+  (evil-leader/set-key
+    "ps" 'helm-projectile-ag
+    "pa" 'helm-projectile-find-file-in-known-projects))
 #+END_SRC
 
-* Whichkey
+* Which-key
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package which-key
-    :ensure t
-    :diminish which-key-mode
-    :config (which-key-mode) )
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config (which-key-mode) )
 #+END_SRC
 
-* Themening
+* Theming
 
 ** Theme to load
-
-#+BEGIN_SRC emacs-lisp
-
-  ;(use-package color-theme :ensure t)
-
-  (load-theme 'tango-dark t)
-#+END_SRC
-
 *** solarized
 
 #+BEGIN_SRC emacs-lisp
-  (use-package solarized-theme
-    :ensure t
-    :defer t
+;;  (use-package solarized-theme
+;;    :ensure t
+;;    :defer t
    ; :init (load-theme 'solarized-dark t)
-    )
+;;    )
 #+END_SRC
 
 *** zenburn
 
 #+BEGIN_SRC emacs-lisp
-
-;  (use-package zenburn-theme
-;    :ensure t)
+;;(use-package zenburn-theme
+;;  :ensure t)
 
 #+END_SRC
 
@@ -432,8 +381,8 @@ I want that emacs opens in fullscreen
 
 #+BEGIN_SRC emacs-lisp
 
-;  (use-package darcula-theme
-;    :ensure t)
+;;  (use-package darcula-theme
+;;    :ensure t)
 
 #+END_SRC
 
@@ -442,16 +391,25 @@ I want that emacs opens in fullscreen
 #+BEGIN_SRC emacs-lisp
 
 ;;(use-package ample-theme
-;;  :init (progn (load-theme 'ample t t)
-;;               (load-theme 'ample-flat t t)
-;;               (load-theme 'ample-light t t)
-;;               (enable-theme 'ample-flat))
 ;;  :defer t
 ;;  :ensure t)
-
 #+END_SRC
 
 
+*** sanityinc-tomorrow
+#+BEGIN_SRC emacs-lisp
+;;(use-package  color-theme-sanityinc-tomorrow
+;;  :ensure t
+;;  :defer t)
+#+END_SRC
+*** load theme
+#+BEGIN_SRC emacs-lisp
+
+;;(use-package color-theme :ensure t)
+(load-theme 'tango-dark t)
+
+;;(load-theme 'sanityinc-tomorrow-eighties t)
+#+END_SRC
 ** Powerline
 
 #+BEGIN_SRC emacs-lisp
@@ -465,22 +423,21 @@ I want that emacs opens in fullscreen
 ** Airline Themes
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package airline-themes
-    :ensure t
-    :init
-    (setq powerline-utf-8-separator-left        #xe0b0
-          powerline-utf-8-separator-right       #xe0b2
-          airline-utf-glyph-separator-left      #xe0b0
-          airline-utf-glyph-separator-right     #xe0b2
-          airline-utf-glyph-subseparator-left   #xe0b1
-          airline-utf-glyph-subseparator-right  #xe0b3
-          airline-utf-glyph-branch              #xe0a0
-          airline-utf-glyph-readonly            #xe0a2
-          airline-utf-glyph-linenumber          #xe0a1)
-    :config
-   ;; (load-theme 'airline-solarized-gui t)
-    (load-theme 'airline-wombat t))
+(use-package airline-themes
+  :ensure t
+  :init
+  (setq powerline-utf-8-separator-left        #xe0b0
+        powerline-utf-8-separator-right       #xe0b2
+        airline-utf-glyph-separator-left      #xe0b0
+        airline-utf-glyph-separator-right     #xe0b2
+        airline-utf-glyph-subseparator-left   #xe0b1
+        airline-utf-glyph-subseparator-right  #xe0b3
+        airline-utf-glyph-branch              #xe0a0
+        airline-utf-glyph-readonly            #xe0a2
+        airline-utf-glyph-linenumber          #xe0a1)
+  :config
+  ;; (load-theme 'airline-solarized-gui t)
+  (load-theme 'airline-wombat t))
 #+END_SRC
 
 
@@ -493,156 +450,187 @@ then also loads the airline theme again so the modeline is not messed
 up :-)
 
 #+BEGIN_SRC emacs-lisp
-  (setq active-theme 'tango-dark)
+(setq active-theme 'tango-dark)
 
-  (defun toggle-light-theme ()
-    (interactive)
-    (if (eq active-theme 'tango-dark)
-        (setq active-theme 'tango)
-      (setq active-theme 'tango-dark))
-    (load-theme active-theme t)
-    (load-theme 'airline-wombat t))
+(defun toggle-light-theme ()
+  (interactive)
+  (if (eq active-theme 'tango-dark)
+      (setq active-theme 'tango)
+    (setq active-theme 'tango-dark))
+  (load-theme active-theme t)
+  (load-theme 'airline-wombat t))
 
-  ;;(toggle-light-theme)
+;;(toggle-light-theme)
 
-  (global-set-key (kbd "<f6>") 'toggle-light-theme)
+(global-set-key (kbd "<f6>") 'toggle-light-theme)
 #+END_SRC
-
 
 * Dashboard
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package dashboard
-    :ensure t
-    :config (dashboard-setup-startup-hook))
+(use-package dashboard
+  :ensure t
+  :config (dashboard-setup-startup-hook))
 
 #+END_SRC
 
 * Plantuml
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package plantuml-mode
-    :ensure t
-    :config (progn
-              (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-              (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
+(use-package plantuml-mode
+  :ensure t
+  :config (progn
+            (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
 
 #+END_SRC
 
 * mu4e
 
 #+BEGIN_SRC emacs-lisp
-  (require 'smtpmail)
+(require 'smtpmail)
 
-  (setq auth-sources '("~/.authinfo.gpg"))
+(setq auth-sources '("~/.authinfo.gpg"))
 
-  (use-package mu4e
-    :commands mu4e
-    :config
-      (setq mu4e-maildir "~/Maildir")
-      (setq mu4e-get-mail-command "offlineimap")
-      (setq mu4e-update-interval 300)
-      (setq mu4e-attachement-dir "~/Downloads")
-      (setq user-full-name "Raffael Affolter")
-      (setq mail-user-agent 'mu4e-user-agent)
-      (setq mu4e-view-show-adresses t)
-      (setq message-send-mail-function 'smtpmail-send-it)
-      (setq message-kill-buffer-on-exit t)
-      (setq mu4e-context-policy 'pick-first)
-      (setq mu4e-contexts
-            `( ,(make-mu4e-context
-                 :name "ZHAW"
-                 :enter-func (lambda() (mu4e-message "Switch to ZHAW"))
-                 :match-func (lambda(msg)
-                               (when msg
-                                 (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
-                 :vars '((user-mail-address . "affolraf@students.zhaw.ch")
-                         (mu4e-sent-folder . "/ZHAW/Sent")
-                         (mu4e-drafts-folder . "/ZHAW/Drafts")
-                         (mu4e-trash-folder . "/ZHAW/Trash")
-                         (smtpmail-default-smtp-server . "smtp.office365.com")
-                         (smtpmail-smtp-server . "smtp.office365.com")
-<<<<<<< HEAD
-                         (smtpmail-local-domain . "office365.com")
-=======
-                         (smtpmail-local-domain . "zhaw.ch")
->>>>>>> f6d1a285893bb6e88640ba0a48511d47d470aece
-                         (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
-                         (smtpmail-stream-type . starttls)
-                         (smtpmail-smtp-service . 587)))
-               ,(make-mu4e-context
-                 :name "Outlook"
-                 :enter-func (lambda() (mu4e-message "Switch to Outlook"))
-                 :match-func (lambda(msg)
-                               (when msg
-                                 (s-prefix? "/Outlook/" (mu4e-message-field msg :maildir))))
-                 :vars '((user-mail-address . "raffael.affolter@outlook.com")
-                         (mu4e-sent-folder . "/Outlook/Sent")
-                         (mu4e-drafts-folder . "/Outlook/Drafts")
-                         (mu4e-trash-folder . "/Outlook/Trash")
-                         (smtpmail-default-smtp-server . "smtp.office365.com")
-                         (smtpmail-smtp-server . "smtp.office365.com")
-                         (smtpmail-local-domain . "outlook.com")
-                         (smtpmail-smtp-user . "raffael.affolter@outlook.com")
-                         (smtpmail-stream-type . starttls)
-                         (smtpmail-smtp-service . 587)
-                         (mu4e-sent-messages-behavior . delete)
-                         (mu4e-sent-messages-behavior . delete)))
-               ,(make-mu4e-context
-                 :name "UZH"
-                 :enter-func (lambda() (mu4e-message "Switch to UZH"))
-                 :match-func (lambda(msg)
-                               (when msg
-                                 (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
-                 :vars '((user-mail-address . "raffael.affolter@uzh.ch")
-                         (mu4e-sent-folder . "/UZH/Gesendet")
-                         (mu4e-drafts-folder . "/UZH/Drafts")
-                         (mu4e-trash-folder . "/UZH/Trash")
-                         (smtpmail-default-smtp-server . "smtp.uzh.ch")
-                         (smtpmail-smtp-server . "smtp.uzh.ch")
-                         (smtpmail-local-domain . "uzh.ch")
-                         (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
-                         (smtpmail-stream-type . starttls)
-                         (smtpmail-smtp-service . 587)))))
+(use-package mu4e
+  :commands mu4e
+  :config
+  (setq mu4e-maildir "~/Maildir")
+  (setq mu4e-get-mail-command "offlineimap")
+  (setq mu4e-update-interval 1200)
+  (setq mu4e-attachement-dir "~/Downloads")
+  (setq user-full-name "Raffael Affolter")
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-view-show-adresses t)
+  (setq mu4e-view-show-images t)
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq message-kill-buffer-on-exit t)
+  (setq mu4e-context-policy 'pick-first)
+  (setq mu4e-compose-signature t my-signature-file "~/.signature")
+  (setq mu4e-compose-dont-reply-to-self t)
+  ;;because we have problem with some mails
+  (setq shr-color-visible-luminance-min 60)
+  (setq shr-color-visible-distance-min 5)
+  (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.ch")
+  (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.com")
+  (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@pm.me")
+  (add-to-list 'mu4e-user-mail-address-list "affolraf@students.zhaw.ch")
+  (setq mu4e-contexts
+        `(,(make-mu4e-context
+            :name "PROTONMAIL"
+            :enter-func (lambda() (mu4e-message "Switch to Protonmail"))
+            :match-func (lambda(msg)
+                          (when msg
+                            (s-prefix? "/PROTONMAIL/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael.affolter@protonmail.ch")
+                    (mu4e-sent-folder . "/PROTONMAIL/Sent")
+                    (mu4e-drafts-folder . "/PROTONMAIL/Drafts-local")
+                    (mu4e-trash-folder . "/PROTONMAIL/Trash")
+                    (smtpmail-default-smtp-server . "127.0.0.1")
+                    (smtpmail-smtp-server . "127.0.0.1")
+                    (smtpmail-local-domain . "127.0.0.1")
+                    (smtpmail-smtp-user . "raffael.affolter@protonmail.ch")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-service . 1025)))
+
+          ,(make-mu4e-context
+            :name "ZHAW"
+            :enter-func (lambda() (mu4e-message "Switch to ZHAW"))
+            :match-func (lambda(msg)
+                          (when msg
+                            (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "affolraf@students.zhaw.ch")
+                    (mu4e-sent-folder . "/ZHAW/Sent")
+                    (mu4e-drafts-folder . "/ZHAW/Drafts")
+                    (mu4e-trash-folder . "/ZHAW/Trash")
+                    (smtpmail-default-smtp-server . "smtp.office365.com")
+                    (smtpmail-smtp-server . "smtp.office365.com")
+                    (smtpmail-local-domain . "office365.com")
+                    (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-service . 587)))
+          ,(make-mu4e-context
+            :name "Outlook"
+            :enter-func (lambda() (mu4e-message "Switch to Outlook"))
+            :match-func (lambda(msg)
+                          (when msg
+                            (s-prefix? "/Outlook/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael.affolter@outlook.com")
+                    (mu4e-sent-folder . "/Outlook/Sent")
+                    (mu4e-drafts-folder . "/Outlook/Drafts")
+                    (mu4e-trash-folder . "/Outlook/Trash")
+                    (smtpmail-default-smtp-server . "smtp.office365.com")
+                    (smtpmail-smtp-server . "smtp.office365.com")
+                    (smtpmail-local-domain . "outlook.com")
+                    (smtpmail-smtp-user . "raffael.affolter@outlook.com")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-service . 587)
+                    (mu4e-sent-messages-behavior . delete)
+                    (mu4e-sent-messages-behavior . delete)))
+          ,(make-mu4e-context
+            :name "UZH"
+            :enter-func (lambda() (mu4e-message "Switch to UZH"))
+            :match-func (lambda(msg)
+                          (when msg
+                            (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael.affolter@uzh.ch")
+                    (mu4e-sent-folder . "/UZH/Gesendet")
+                    (mu4e-drafts-folder . "/UZH/Drafts")
+                    (mu4e-trash-folder . "/UZH/Trash")
+                    (smtpmail-default-smtp-server . "smtp.uzh.ch")
+                    (smtpmail-smtp-server . "smtp.uzh.ch")
+                    (smtpmail-local-domain . "uzh.ch")
+                    (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-service . 587)))))
 
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
   (add-hook 'message-mode-hook 'turn-on-orgstruct++)
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
-  (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "deutsch"))))
+  (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "de_CH"))))
 #+END_SRC
 
 * flyspell
 we want flyspell to be enabled by default in text org and latex files
 
 #+BEGIN_SRC emacs-lisp
+(setq ispell-list-command "--list")
+(setq ispell-dictionary "de_CH")
+(add-hook 'text-mode-hook 'flyspell-mode)
+#+END_SRC
 
-  (setq ispell-dictionary "german")
-  (add-hook 'text-mode-hook 'flyspell-mode)
+also easy swich between english and german
 
+#+BEGIN_SRC emacs-lisp
+(defun fd-switch-dictionary()
+  (interactive)
+  (let* ((dic ispell-current-dictionary)
+         (change (if (string= dic "de_CH") "english" "de_CH")))
+    (ispell-change-dictionary change)
+    (message "Dictionary switched from %s to %s" dic change)))
+
+(global-set-key (kbd "<f8>")   'fd-switch-dictionary)
 #+END_SRC
 
 * Org-Mode Settings
 ** configure latex compiler
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-compiler "xelatex")
+(setq org-latex-compiler "xelatex")
 #+END_SRC
 ** configure pdflatex
 #+BEGIN_SRC emacs-lisp
-  (setq org-latex-pdf-process
-        '("xelatex -interaction nonstopmode %f"
-          "bibtex %b"
-          "xelatex -interaction nonstopmode %f"
-          "xelatex -interaction nonstopmode %f"))
+(setq org-latex-pdf-process
+      '("xelatex -interaction nonstopmode %f"
+        "bibtex %b"
+        "xelatex -interaction nonstopmode %f"
+        "xelatex -interaction nonstopmode %f"))
 #+END_SRC
 
 ** Enable native intendations in sourc blocks
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq org-src-tab-acts-natively t)
-  (setq org-src-preserve-indentation t)
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
 #+END_SRC
 
 ** KOMA-SCRIPT
@@ -650,141 +638,129 @@ we want koma script
 
 #+BEGIN_SRC emacs-lisp
 
-  (with-eval-after-load "ox-latex"
-    (add-to-list 'org-latex-classes
-                 '("koma-article" "\\documentclass{scrartcl}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("koma-article" "\\documentclass{scrartcl}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-  (with-eval-after-load "ox-latex"
+(with-eval-after-load "ox-latex"
 
-    (add-to-list 'org-latex-classes
-                 '("koma-letter"
-                   "\\documentclass[11pt]{scrlttr2}"
-                   "\\usepackage[utf8]{inputenc}"
-                   "\\usepackage[T1]{fontenc}"
-                   "\\usepackage{xcolor}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+  (add-to-list 'org-latex-classes
+               '("koma-letter"
+                 "\\documentclass[11pt]{scrlttr2}"
+                 "\\usepackage[utf8]{inputenc}"
+                 "\\usepackage[T1]{fontenc}"
+                 "\\usepackage{xcolor}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 #+END_SRC
 
-** eurpecv-class
+** europecv-class
 
 #+BEGIN_SRC emacs-lisp
-
-  (with-eval-after-load "ox-latex"
-    (add-to-list 'org-latex-classes
-                 '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
 
 #+END_SRC
 
 ** Plain lists
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq org-list-allow-alphabetical t)
-
+(setq org-list-allow-alphabetical t)
 #+END_SRC
 
 ** where is my agenda
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
-
+(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
 #+END_SRC
 
 ** Org bullets makes things look pretty
 
 #+BEGIN_SRC emacs-lisp
-
-  (setenv "BROWSER" "chromium-browser")
-  (use-package org-bullets
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(setenv "BROWSER" "chromium-browser")
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 #+END_SRC
 
 ** Org mu4e
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package org-mu4e)
-
+(use-package org-mu4e)
 #+END_SRC
 
 ** enable Markdown export
 
 #+BEGIN_SRC emacs-lisp
-
-  (with-eval-after-load 'org
-    (require 'ox-md nil t))
-
+(with-eval-after-load 'org
+  (require 'ox-md nil t))
 #+END_SRC
 
 ** Org-Journal
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org-journal
-    :defer t
-    :ensure t
-    :init
-    (setq org-journal-dir "~/Dokumente/org-documents/journals")
-    (setq org-journal-file-format "%d-%m-%Y.org"))
+(use-package org-journal
+  :defer t
+  :ensure t
+  :init
+  (setq org-journal-dir "~/Dokumente/org-documents/journals")
+  (setq org-journal-file-format "%d-%m-%Y.org"))
 #+END_SRC
 
 ** Org-Projects
 here are my project settings
 #+BEGIN_SRC emacs-lisp
-  (setq org-publish-project-alist
+(setq org-publish-project-alist
 
-        '(("blog"
-           :base-directory "~/git/cerealbuster.gitlab.io/org"
-           :base-extension "org"
-           :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
-           :recursive t
-           :publishing-function org-md-publish-to-md
-           :headline-levels 4)))
+      '(("blog"
+         :base-directory "~/git/cerealbuster.gitlab.io/org"
+         :base-extension "org"
+         :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
+         :recursive t
+         :publishing-function org-md-publish-to-md
+         :headline-levels 4)))
 #+END_SRC
 
 ** ob-hy
 #+BEGIN_SRC emacs-lisp
-  (use-package ob-hy
-    :ensure t
-    :defer t)
+(use-package ob-hy
+  :ensure t
+  :defer t)
 #+END_SRC
 
 ** org-babel
 This languages shoud be loaded when creating code
 #+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)
-     (clojure . t)
-     (hy . t)
-     (scheme . t)
-     (R . t)
-     (ein .t )))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (clojure . t)
+   (hy . t)
+   (scheme . t)
+   (R . t)
+   (ein .t )))
 
-  (setq org-babel-python-command "python3")
+(setq org-babel-python-command "python3")
 #+END_SRC
-
 
 * Latex
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package auctex
-    :defer t
-    :ensure t)
+(use-package auctex
+  :defer t
+  :ensure t)
 
 #+END_SRC
 
@@ -794,118 +770,101 @@ This languages shoud be loaded when creating code
 Line numbers
 
 #+BEGIN_SRC emacs-lisp
-
-  (global-linum-mode t)
-
+(global-linum-mode t)
 #+END_SRC
 
 Tabs
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq-default tab-width 2)
-
+(setq-default tab-width 2)
 #+END_SRC
 
 Use 2 spaces instead of tab.
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq-default tab-width 2 indent-tabs-mode nil)
-
+(setq-default tab-width 2 indent-tabs-mode nil)
 #+END_SRC
 
 intendation cannot insert tabs
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq-default inent-tabs-mode nil)
-
+(setq-default inent-tabs-mode nil)
 #+END_SRC
 
 Two spaces for programming languages
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq python-indent 2)
-  (setq js-indent-level 2)
-
+(setq python-indent 2)
+(setq js-indent-level 2)
 #+END_SRC
 
 auto indent with return key
 
 #+BEGIN_SRC emacs-lisp
-
-  (define-key global-map (kbd "RET") 'newline-and-indent)
-
+(define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
 No trailing white spaces except in makrdowns
 
 #+BEGIN_SRC emacs-lisp
-
-  (add-hook 'before-save-hook
-            '(lambda()
-               (when (not (derived-mode-p 'markdown-mode))
-                 (delete-trailing-whitespace))))
+(add-hook 'before-save-hook
+          '(lambda()
+             (when (not (derived-mode-p 'markdown-mode))
+               (delete-trailing-whitespace))))
 
 #+END_SRC
 
 highlight fixme todo and bug statement
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package fixme-mode
-    :ensure t
-    :config (fixme-mode nil)
-    )
+(use-package fixme-mode
+  :ensure t
+  :config (fixme-mode nil))
 #+END_SRC
 
 highlight all characters which are over the column 80
 
 #+BEGIN_SRC emacs-lisp
+(require 'whitespace)
+(setq whitespace-line-column 100)
+(setq whitespace-style '(face lines-tail))
 
-  (require 'whitespace)
-  (setq whitespace-line-column 100)
-  (setq whitespace-style '(face lines-tail))
-
-  (add-hook 'prog-mode-hook 'whitespace-mode)
-  (diminish 'whitespace-mode)
+(add-hook 'prog-mode-hook 'whitespace-mode)
+(diminish 'whitespace-mode)
 #+END_SRC
 
 Use python3 as default
 #+BEGIN_SRC  emacs-lisp
-  (setq python-shell-interpreter "python3")
+(setq python-shell-interpreter "python3")
 #+END_SRC
 
 ** realgud
 
 #+BEGIN_SRC  emacs-lisp
-  (use-package realgud
-    :ensure t)
+(use-package realgud
+  :ensure t)
 #+END_SRC
 
 ** Paredit
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package paredit
-    :ensure t
-    :diminish paredit-mode
-    :init
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-    (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook 'enable-paredit-mode)
-    (add-hook 'json-mode-hook 'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-    (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
+(use-package paredit
+  :ensure t
+  :diminish paredit-mode
+  :init
+  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+  (add-hook 'json-mode-hook 'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+  (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
+  (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
   ;;  (add-hook 'ess-mode-hook 'enable-paredit-mode)
-    (add-hook 'hy-mode-hook 'enable-paredit-mode))
+  (add-hook 'hy-mode-hook 'enable-paredit-mode))
 #+END_SRC
 
 
@@ -919,26 +878,24 @@ Use python3 as default
 ** Clojure
 
 #+BEGIN_SRC emacs-lisp
+(use-package clojure-mode
+  :ensure t)
 
-  (use-package clojure-mode
-    :ensure t)
-
-  (use-package clojure-mode-extra-font-locking
-    :ensure t)
+(use-package clojure-mode-extra-font-locking
+  :ensure t)
 
 #+END_SRC
 
 ** Cider
 
 #+BEGIN_SRC emacs-lisp
+(use-package cider
+  :ensure t
+  :config
+  (add-hook 'cider-mode-hook #'eldoc-mode))
 
-  (use-package cider
-    :ensure t
-    :config
-    (add-hook 'cider-mode-hook #'eldoc-mode))
-
-  (setq cider-cljs-lein-repl
-    "(do (require 'figwheel-sidecar.repl-api)
+(setq cider-cljs-lein-repl
+      "(do (require 'figwheel-sidecar.repl-api)
            (figwheel-sidecar.repl-api/start-figwheel!)
            (figwheel-sidecar.repl-api/cljs-repl))")
 #+END_SRC
@@ -946,11 +903,10 @@ Use python3 as default
 ** SLIME
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package slime
-    :ensure t
-    :config (progn (setq inferior-lisp-program "/usr/bin/clisp -K full")
-            (setq slime-contribs '(slime-fancy))))
+(use-package slime
+  :ensure t
+  :config (progn (setq inferior-lisp-program "/usr/bin/clisp -K full")
+                 (setq slime-contribs '(slime-fancy))))
 
 #+END_SRC
 
@@ -959,69 +915,60 @@ Use python3 as default
 We want a good racket workspace
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package geiser
-    :ensure t)
-
+(use-package geiser
+  :ensure t)
 #+END_SRC
 
 ** Hy
 #+BEGIN_SRC emacs-lisp
-  (use-package hy-mode
-    :ensure t)
+(use-package hy-mode
+  :ensure t)
 #+END_SRC
 ** Magit
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package magit
-    :ensure t
-    :config (global-set-key (kbd "C-x g") 'magit-status))
+(use-package magit
+  :ensure t
+  :config (global-set-key (kbd "C-x g") 'magit-status))
 
 #+END_SRC
 
 ** flycheck
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package flycheck
-    :ensure t
-    :diminish flycheck-mode
-    :init (global-flycheck-mode))
+(use-package flycheck
+  :ensure t
+  :diminish flycheck-mode
+  :init (global-flycheck-mode))
 #+END_SRC
 
 
 ** Rainboooows
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package rainbow-delimiters
-    :ensure t
-    :init (progn
-            (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)))
+(use-package rainbow-delimiters
+  :ensure t
+  :init
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 #+END_SRC
 
 ** Yaml
 
 #+BEGIN_SRC emacs-lisp
-
-  (use-package yaml-mode
-    :ensure t)
+(use-package yaml-mode
+  :ensure t)
 
 #+END_SRC
 
 ** ESS
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
-  (use-package ess
-    :ensure t
-    :defer t
-    :init
-    (electric-pair-mode 1))
+(use-package ess
+  :ensure t
+  :defer t
+  :init
+  (electric-pair-mode 1))
 #+END_SRC
-
-#+RESULTS:
-: t
 
 ** Jupyter support
 
@@ -1038,10 +985,9 @@ we use ESS for R
 * Golden Ratio
 
 #+BEGIN_SRC emacs-lisp
-
-    (use-package golden-ratio
-      :ensure t
-      :diminish golden-ratio-mode
-      :init (setq golden-ratio-auto-scale t)
-      :config (golden-ratio-mode 1))
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :init (setq golden-ratio-auto-scale t)
+  :config (golden-ratio-mode 1))
 #+END_SRC
