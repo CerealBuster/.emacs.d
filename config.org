@@ -15,14 +15,14 @@ I don't want that every minor mode is cluttering my modeline
 #+BEGIN_SRC emacs-lisp
 (use-package exwm
   :ensure t
-  :init
-  (require 'exwm-config)
-                                        ;   (exwm-config-default)
+  :defer t
   :config
-  (setq exwm-workspace-number 4)
+  (require 'exwm-config)
   (require 'exwm-systemtray)
+  (exwm-config-misc)
+  (setq exwm-workspace-number 4)
   (exwm-systemtray-enable)
-  (setq exwm-systemtray-height 30)
+  (setq exwm-systemtray-height 15)
   (setq exwm-input-global-keys
         `(
           ;; Bind "s-r" to exit char-mode and fullscreen mode.
@@ -48,9 +48,6 @@ I don't want that every minor mode is cluttering my modeline
           ([?\s-p] . helm-run-external-command)
           ([?\s-:] . evil-ex))))
 #+END_SRC
-
-#+RESULTS:
-: t
 
 * desktop-environment
 
@@ -402,11 +399,17 @@ I want that emacs opens in fullscreen
 ;;  :ensure t
 ;;  :defer t)
 #+END_SRC
+*** gruvbox
+#+BEGIN_SRC emacs-lisp
+(use-package gruvbox-theme
+  :ensure t)
+#+END_SRC
+
 *** load theme
 #+BEGIN_SRC emacs-lisp
 
 ;;(use-package color-theme :ensure t)
-(load-theme 'tango-dark t)
+(load-theme 'gruvbox-light-hard t)
 
 ;;(load-theme 'sanityinc-tomorrow-eighties t)
 #+END_SRC
@@ -436,8 +439,11 @@ I want that emacs opens in fullscreen
         airline-utf-glyph-readonly            #xe0a2
         airline-utf-glyph-linenumber          #xe0a1)
   :config
-  ;; (load-theme 'airline-solarized-gui t)
-  (load-theme 'airline-wombat t))
+  ;;(load-theme 'airline-solarized-gui t)
+  ;;(load-theme 'airline-wombat t)
+  ;;(load-theme 'airline-gruvbox-dark t)
+  (load-theme 'airline-sol t)
+  )
 #+END_SRC
 
 
@@ -450,15 +456,18 @@ then also loads the airline theme again so the modeline is not messed
 up :-)
 
 #+BEGIN_SRC emacs-lisp
-(setq active-theme 'tango-dark)
+(setq light-theme 'gruvbox-light-hard)
+(setq dark-theme 'gruvbox-dark-hard)
+
+(setq active-theme light-theme)
 
 (defun toggle-light-theme ()
   (interactive)
-  (if (eq active-theme 'tango-dark)
-      (setq active-theme 'tango)
-    (setq active-theme 'tango-dark))
+  (if (eq active-theme dark-theme)
+      (setq active-theme light-theme)
+    (setq active-theme dark-theme))
   (load-theme active-theme t)
-  (load-theme 'airline-wombat t))
+  (load-theme 'airline-sol t))
 
 ;;(toggle-light-theme)
 
@@ -470,7 +479,8 @@ up :-)
 #+BEGIN_SRC emacs-lisp
 (use-package dashboard
   :ensure t
-  :config (dashboard-setup-startup-hook))
+  :config
+  (dashboard-setup-startup-hook))
 
 #+END_SRC
 
@@ -511,6 +521,7 @@ up :-)
   ;;because we have problem with some mails
   (setq shr-color-visible-luminance-min 60)
   (setq shr-color-visible-distance-min 5)
+  (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.ch")
   (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.com")
   (add-to-list 'mu4e-user-mail-address-list "raffael.affolter@pm.me")
@@ -610,149 +621,6 @@ also easy swich between english and german
     (message "Dictionary switched from %s to %s" dic change)))
 
 (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
-#+END_SRC
-
-* Org-Mode Settings
-** configure latex compiler
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-compiler "xelatex")
-#+END_SRC
-** configure pdflatex
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process
-      '("xelatex -interaction nonstopmode %f"
-        "bibtex %b"
-        "xelatex -interaction nonstopmode %f"
-        "xelatex -interaction nonstopmode %f"))
-#+END_SRC
-
-** Enable native intendations in sourc blocks
-
-#+BEGIN_SRC emacs-lisp
-(setq org-src-tab-acts-natively t)
-(setq org-src-preserve-indentation t)
-#+END_SRC
-
-** KOMA-SCRIPT
-we want koma script
-
-#+BEGIN_SRC emacs-lisp
-
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("koma-article" "\\documentclass{scrartcl}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-(with-eval-after-load "ox-latex"
-
-  (add-to-list 'org-latex-classes
-               '("koma-letter"
-                 "\\documentclass[11pt]{scrlttr2}"
-                 "\\usepackage[utf8]{inputenc}"
-                 "\\usepackage[T1]{fontenc}"
-                 "\\usepackage{xcolor}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-#+END_SRC
-
-** europecv-class
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
-
-#+END_SRC
-
-** Plain lists
-
-#+BEGIN_SRC emacs-lisp
-(setq org-list-allow-alphabetical t)
-#+END_SRC
-
-** where is my agenda
-
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
-#+END_SRC
-
-** Org bullets makes things look pretty
-
-#+BEGIN_SRC emacs-lisp
-(setenv "BROWSER" "chromium-browser")
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-#+END_SRC
-
-** Org mu4e
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-mu4e)
-#+END_SRC
-
-** enable Markdown export
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (require 'ox-md nil t))
-#+END_SRC
-
-** Org-Journal
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-journal
-  :defer t
-  :ensure t
-  :init
-  (setq org-journal-dir "~/Dokumente/org-documents/journals")
-  (setq org-journal-file-format "%d-%m-%Y.org"))
-#+END_SRC
-
-** Org-Projects
-here are my project settings
-#+BEGIN_SRC emacs-lisp
-(setq org-publish-project-alist
-
-      '(("blog"
-         :base-directory "~/git/cerealbuster.gitlab.io/org"
-         :base-extension "org"
-         :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
-         :recursive t
-         :publishing-function org-md-publish-to-md
-         :headline-levels 4)))
-#+END_SRC
-
-** ob-hy
-#+BEGIN_SRC emacs-lisp
-(use-package ob-hy
-  :ensure t
-  :defer t)
-#+END_SRC
-
-** org-babel
-This languages shoud be loaded when creating code
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (clojure . t)
-   (hy . t)
-   (scheme . t)
-   (R . t)
-   (ein .t )))
-
-(setq org-babel-python-command "python3")
 #+END_SRC
 
 * Latex
@@ -863,7 +731,6 @@ Use python3 as default
   (add-hook 'scheme-mode-hook 'enable-paredit-mode)
   (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
   (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
-  ;;  (add-hook 'ess-mode-hook 'enable-paredit-mode)
   (add-hook 'hy-mode-hook 'enable-paredit-mode))
 #+END_SRC
 
@@ -990,4 +857,145 @@ we use ESS for R
   :diminish golden-ratio-mode
   :init (setq golden-ratio-auto-scale t)
   :config (golden-ratio-mode 1))
+#+END_SRC
+* Org-Mode Settings
+** configure latex compiler
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-compiler "xelatex")
+#+END_SRC
+** configure pdflatex
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-pdf-process
+      '("xelatex -interaction nonstopmode %f"
+        "bibtex %b"
+        "xelatex -interaction nonstopmode %f"
+        "xelatex -interaction nonstopmode %f"))
+#+END_SRC
+
+** Enable native intendations in sourc blocks
+
+#+BEGIN_SRC emacs-lisp
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
+#+END_SRC
+
+** KOMA-SCRIPT
+we want koma script
+
+#+BEGIN_SRC emacs-lisp
+
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("koma-article" "\\documentclass{scrartcl}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(with-eval-after-load "ox-latex"
+
+  (add-to-list 'org-latex-classes
+               '("koma-letter"
+                 "\\documentclass[11pt]{scrlttr2}"
+                 "\\usepackage[utf8]{inputenc}"
+                 "\\usepackage[T1]{fontenc}"
+                 "\\usepackage{xcolor}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+#+END_SRC
+
+** europecv-class
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
+
+#+END_SRC
+
+** Plain lists
+
+#+BEGIN_SRC emacs-lisp
+(setq org-list-allow-alphabetical t)
+#+END_SRC
+
+** where is my agenda
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
+#+END_SRC
+
+** Org bullets makes things look pretty
+
+#+BEGIN_SRC emacs-lisp
+(setenv "BROWSER" "chromium-browser")
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+#+END_SRC
+
+** Org mu4e
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-mu4e)
+#+END_SRC
+
+** enable Markdown export
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+  (require 'ox-md nil t))
+#+END_SRC
+
+** Org-Journal
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-journal
+  :defer t
+  :ensure t
+  :init
+  (setq org-journal-dir "~/Dokumente/org-documents/journals")
+  (setq org-journal-file-format "%d-%m-%Y.org"))
+#+END_SRC
+
+** Org-Projects
+here are my project settings
+#+BEGIN_SRC emacs-lisp
+(setq org-publish-project-alist
+
+      '(("blog"
+         :base-directory "~/git/cerealbuster.gitlab.io/org"
+         :base-extension "org"
+         :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
+         :recursive t
+         :publishing-function org-md-publish-to-md
+         :headline-levels 4)))
+#+END_SRC
+
+** ob-hy
+#+BEGIN_SRC emacs-lisp
+(use-package ob-hy
+  :ensure t)
+#+END_SRC
+
+** org-babel
+This languages shoud be loaded when creating code
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (clojure . t)
+   (hy . t)
+   (scheme . t)
+   (R . t)
+   (ein . t)))
+
+(setq org-babel-python-command "python3")
 #+END_SRC
