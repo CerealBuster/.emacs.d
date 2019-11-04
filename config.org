@@ -976,7 +976,6 @@ we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
   :ensure t
-  :defer t
   :init
   (electric-pair-mode 1))
 #+END_SRC
