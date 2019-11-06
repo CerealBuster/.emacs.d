@@ -218,9 +218,10 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
+  (add-to-list 'default-frame-alist '(font . "Hack-11"))
+
   (when (member "Hack" (font-family-list))
     (set-face-attribute 'default nil :font "Hack" :height 110))
-
 #+END_SRC
 
 ** winner mode
@@ -239,8 +240,9 @@ the key commands ‘C-c left’ and ‘C-c right’.
 
 I want that emacs opens in fullscreen
 #+BEGIN_SRC emacs-lisp
-  (custom-set-variables
-   '(initial-frame-alist (quote ((fullscreen . maximized)))))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+  ;;(custom-set-variables
+   ;;'(initial-frame-alist (quote ((fullscreen . maximized)))))
 #+End_SRC
 
 * Evil
@@ -281,6 +283,14 @@ I want that emacs opens in fullscreen
   :ensure t)
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
+
+;;pdf-tools
+(evil-set-initial-state 'pdf-view-mode 'emacs)
+(add-hook 'pdf-view-mode-hook
+  (lambda ()
+    (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+
+(pdf-tools-install)
 #+END_SRC
 
 * Projectile
@@ -307,6 +317,7 @@ I want that emacs opens in fullscreen
   (setq helm-autoresize-mode t)
   (setq helm-buffer-max-length 40)
   (global-set-key (kbd "M-x") #'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
   (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
 #+END_SRC
@@ -480,8 +491,9 @@ up :-)
 (use-package dashboard
   :ensure t
   :config
-  (dashboard-setup-startup-hook))
-
+  (dashboard-setup-startup-hook)
+  (setq initial-buffer-choice (lambda ()
+                                (get-buffer "*dashboard*"))))
 #+END_SRC
 
 * Plantuml
@@ -792,7 +804,7 @@ This languages shoud be loaded when creating code
 Line numbers
 
 #+BEGIN_SRC emacs-lisp
-(global-linum-mode t)
+(global-display-line-numbers-mode)
 #+END_SRC
 
 Tabs
@@ -1081,6 +1093,74 @@ we want koma script
 
 #+END_SRC
 
+** Bibtex settings
+
+#+BEGIN_SRC emacs-lisp
+(setq my-bibtex-dir "~/bibliography/"
+      my-bibtex-pdf-dir (concat my-bibtex-dir "bibtex-pdfs/")
+      my-default-bibfile (list  (concat my-bibtex-dir "default-bibliography.bib"))
+      my-default-bibnotes my-bibtex-dir)
+#+END_SRC
+
+Definitions for automatically generating a bibtex key from a bibtex
+entry. Look at help:bibtex-generate-autokey to understand the settings
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-autokey-year-length 4
+      bibtex-autokey-name-year-separator "-"
+      bibtex-autokey-year-title-separator "-"
+      bibtex-autokey-titleword-separator "-"
+      bibtex-autokey-titlewords 2
+      bibtex-autokey-titlewords-stretch 1
+      bibtex-autokey-titleword-length 5)
+#+END_SRC
+
+** Org-Ref
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+  :ensure t
+  :commands org-ref-bibtex-hydra/body
+  :config
+  (setq org-ref-notes-directory my-bibtex-dir
+        org-ref-default-bibliography my-default-bibfile
+        org-ref-bibliography-notes my-default-bibnotes
+        org-ref-pdf-directory my-bibtex-pdf-dir)
+  (setq org-ref-notes-function
+        (lambda (thekey)
+          (let ((bibtex-completion-bibliography
+                 (org-ref-find-bibliography)))
+            (bibtex-completion-edit-notes
+             (list
+              (car (org-ref-get-bibtex-key-and-file thekey))))))))
+#+END_SRC
+
+** Org-noter
+#+BEGIN_SRC emacs-lisp
+(use-package org-noter
+  :ensure t
+  :config
+  (setq org-noter-notes-search-path (list my-default-bibnotes))
+  :bind ("C-c i" . 'org-noter-insert-note))
+#+END_SRC
+
+** helm bibtex
+#+BEGIN_SRC emacs-lisp
+(use-package helm-bibtex
+  :ensure t
+  :commands helm-bibtex
+  :config
+  (setq helm-bibtex-bibliography my-default-bibfile ;; where your references are stored
+        helm-bibtex-library-path my-bibtex-pdf-dir ;; where your pdfs etc are stored
+        bibtex-completion-bibliography my-default-bibfile
+        bibtex-completion-notes-path my-default-bibnotes
+        ;; name of note-file will be {pdffile} + extension
+        bibtex-completion-notes-extension ".org"
+        bibtex-completion-notes-template-multiple-files
+        (format
+         "#+TITLE: Notes on ${=key=}: ${title}\n#+INTERLEAVE_PDF: %s${=key=}.pdf\n\n"
+         my-bibtex-pdf-dir)       ;; header to be used in the associated notes files
+        bibtex-completion-additional-search-fields '(keywords)))
+#+END_SRC
 ** Org bullets makes things look pretty
 
 #+BEGIN_SRC emacs-lisp
@@ -1306,4 +1386,10 @@ This languages shoud be loaded when creating code
    (ein . t)))
 
 (setq org-babel-python-command "python3")
+#+END_SRC
+* Ledger Mode
+  Lets try ledger mode
+#+BEGIN_SRC emacs-lisp
+(use-package ledger-mode
+  :ensure t)
 #+END_SRC
