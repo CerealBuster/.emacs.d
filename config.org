@@ -284,13 +284,13 @@ I want that emacs opens in fullscreen
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
 
-;;pdf-tools
-(evil-set-initial-state 'pdf-view-mode 'emacs)
-(add-hook 'pdf-view-mode-hook
-  (lambda ()
-    (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
-
-(pdf-tools-install)
+(use-package pdf-tools
+  :config
+  (evil-set-initial-state 'pdf-view-mode 'emacs)
+  (add-hook 'pdf-view-mode-hook
+            (lambda ()
+              (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+  (pdf-tools-install))
 #+END_SRC
 
 * Projectile
@@ -773,22 +773,6 @@ here are my project settings
   :ensure t
   :defer t)
 #+END_SRC
-
-** org-babel
-This languages shoud be loaded when creating code
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (clojure . t)
-   (hy . t)
-   (scheme . t)
-   (R . t)
-   (ein .t )))
-
-(setq org-babel-python-command "python3")
-#+END_SRC
-
 * Latex
 
 #+BEGIN_SRC emacs-lisp
@@ -938,7 +922,7 @@ Use python3 as default
 #+BEGIN_SRC emacs-lisp
 (use-package slime
   :ensure t
-  :config (progn (setq inferior-lisp-program "/usr/bin/clisp -K full")
+  :config (progn (setq inferior-lisp-program "/usr/bin/clisp")
                  (setq slime-contribs '(slime-fancy))))
 
 #+END_SRC
@@ -1225,16 +1209,19 @@ here are my project settings
 ** org-babel
 This languages shoud be loaded when creating code
 #+BEGIN_SRC emacs-lisp
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)
-     (clojure . t)
-     (hy . t)
-     (scheme . t)
-     (R . t)
-     (ein .t )))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (lisp . t)
+   (clojure . t)
+   (hy . t)
+   (scheme . t)
+   (R . t)
+   (ein .t )))
 
-  (setq org-babel-python-command "python3")
+(setq geiser-active-implementations '(racket))
+(setq org-babel-clojure-backend 'cider)
+(setq org-babel-python-command "python3")
 #+END_SRC
 
 * Golden Ratio
