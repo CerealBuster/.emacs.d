@@ -245,6 +245,18 @@ I want that emacs opens in fullscreen
    ;;'(initial-frame-alist (quote ((fullscreen . maximized)))))
 #+End_SRC
 
+
+** Client settings
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'server-switch-hook
+          (lambda ()
+            (when (current-local-map)
+              (use-local-map (copy-keymap (current-local-map))))
+            (when server-buffer-clients
+              (local-set-key (kbd "C-x k") 'server-edit))))
+#+END_SRC
+
 * Evil
 
 #+BEGIN_SRC emacs-lisp
@@ -982,7 +994,7 @@ we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
   :ensure t
-  :init
+  :config
   (electric-pair-mode 1))
 #+END_SRC
 
