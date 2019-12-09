@@ -661,6 +661,12 @@ also easy swich between english and german
         "xelatex -interaction nonstopmode %f"))
 #+END_SRC
 
+** Set latex preview
+
+#+BEGIN_SRC emacs-lisp
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+#+END_SRC
+
 ** Enable native intendations in sourc blocks
 
 #+BEGIN_SRC emacs-lisp
@@ -945,7 +951,9 @@ We want a good racket workspace
 
 #+BEGIN_SRC emacs-lisp
 (use-package geiser
-  :ensure t)
+  :ensure t
+  :config
+  (setq geiser-active-implementations '(racket)))
 #+END_SRC
 
 ** Hy
@@ -1230,8 +1238,6 @@ This languages shoud be loaded when creating code
    (scheme . t)
    (R . t)
    (ein .t )))
-
-(setq geiser-active-implementations '(racket))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
 #+END_SRC
