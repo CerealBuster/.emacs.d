@@ -647,133 +647,6 @@ also easy swich between english and german
 (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
 #+END_SRC
 
-* Org-Mode Settings
-** configure latex compiler
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-compiler "xelatex")
-#+END_SRC
-** configure pdflatex
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process
-      '("xelatex -interaction nonstopmode %f"
-        "bibtex %b"
-        "xelatex -interaction nonstopmode %f"
-        "xelatex -interaction nonstopmode %f"))
-#+END_SRC
-
-** Set latex preview
-
-#+BEGIN_SRC emacs-lisp
-(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
-#+END_SRC
-
-** Enable native intendations in sourc blocks
-
-#+BEGIN_SRC emacs-lisp
-(setq org-src-tab-acts-natively t)
-(setq org-src-preserve-indentation t)
-#+END_SRC
-
-** KOMA-SCRIPT
-we want koma script
-
-#+BEGIN_SRC emacs-lisp
-
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("koma-article" "\\documentclass{scrartcl}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-(with-eval-after-load "ox-latex"
-
-  (add-to-list 'org-latex-classes
-               '("koma-letter"
-                 "\\documentclass[11pt]{scrlttr2}"
-                 "\\usepackage[utf8]{inputenc}"
-                 "\\usepackage[T1]{fontenc}"
-                 "\\usepackage{xcolor}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-#+END_SRC
-
-** europecv-class
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
-
-#+END_SRC
-
-** Plain lists
-
-#+BEGIN_SRC emacs-lisp
-(setq org-list-allow-alphabetical t)
-#+END_SRC
-
-** where is my agenda
-
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
-#+END_SRC
-
-** Org bullets makes things look pretty
-
-#+BEGIN_SRC emacs-lisp
-(setenv "BROWSER" "chromium-browser")
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-#+END_SRC
-
-** Org mu4e
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-mu4e)
-#+END_SRC
-
-** enable Markdown export
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (require 'ox-md nil t))
-#+END_SRC
-
-** Org-Journal
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-journal
-  :defer t
-  :ensure t
-  :init
-  (setq org-journal-dir "~/Dokumente/org-documents/journals")
-  (setq org-journal-file-format "%d-%m-%Y.org"))
-#+END_SRC
-
-** Org-Projects
-here are my project settings
-#+BEGIN_SRC emacs-lisp
-(setq org-publish-project-alist
-
-      '(("blog"
-         :base-directory "~/git/cerealbuster.gitlab.io/org"
-         :base-extension "org"
-         :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
-         :recursive t
-         :publishing-function org-md-publish-to-md
-         :headline-levels 4)))
-#+END_SRC
-
 * Markdown
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -787,9 +660,6 @@ here are my project settings
 #+BEGIN_SRC emacs-lisp
 (use-package px
   :ensure t)
-(use-package ob-hy
-  :ensure t
-  :defer t)
 #+END_SRC
 * Latex
 
@@ -1118,6 +988,23 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
       bibtex-autokey-titleword-length 5)
 #+END_SRC
 
+** org capture templates
+#+BEGIN_SRC emacs-lisp
+(defun name-blog-file ()
+  (interactive)
+  (let ((name (read-string "Name: ")))
+    (expand-file-name (format "%s/%s-%s.org"
+                              (format-time-string "%Y")
+                              (format-time-string "%Y-%m-%d")
+                              name) "~/git/testblog/org/posts/")))
+
+(setq org-capture-templates
+      '(("t" "Task" entry (file+headline "" "Tasks")
+         "* TODO %?\n  %u\n  %a")
+        ("b" "New blog entry" plain (file name-blog-file)
+         (file "~/git/testblog/templates/blog-capture.org"))))
+#+END_SRC
+
 ** Org-Ref
 
 #+BEGIN_SRC emacs-lisp
@@ -1168,13 +1055,11 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 ** Org bullets makes things look pretty
 
 #+BEGIN_SRC emacs-lisp
-
   (setenv "BROWSER" "chromium-browser")
   (use-package org-bullets
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
 #+END_SRC
 
 ** Org mu4e
@@ -1208,22 +1093,77 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 ** Org-Projects
 here are my project settings
 #+BEGIN_SRC emacs-lisp
-  (setq org-publish-project-alist
+(add-to-list 'org-export-options-alist '(:page-type "PAGE_TYPE" "default" nil parse))
+#+END_SRC
 
-        '(("blog"
-           :base-directory "~/git/cerealbuster.gitlab.io/org"
+#+BEGIN_SRC emacs-lisp
+(defun my/sitemap-fn (title list)
+  "Generate the sitemap (Blog Main Page)"
+  (concat "#+TITLE: " title "\n\n"
+          (string-join (mapcar #'car (cdr list)) "\n\n")))
+
+(defun my/sitemap-entry (entry style project)
+  "I create a custom sitemap entry"
+  (format (string-join
+           '("[[file:%s][%s]]"
+             "#+BEGIN_published"
+             "%s"
+             "#+END_published"
+             )"\n")
+          entry
+          (org-publish-find-title entry project)
+          (format-time-string "%d-%m-%Y" (org-publish-find-date entry project))))
+
+(setq org-publish-project-alist
+
+        '(("static-sites"
+           :base-directory "~/git/cerealbuster.gitlab.io/org/"
            :base-extension "org"
-           :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
+           :publishing-directory "~/git/cerealbuster.gitlab.io/"
+           :publishing-function org-html-publish-to-html
            :recursive t
-           :publishing-function org-md-publish-to-md
-           :headline-levels 4)))
+           :exclude "posts/"
+           :headline-levels 4
+           :section-numbers nil
+           :auto-preamble t
+           :html-link-home "index.html"
+           :html-link-up "index.html"
+           :html-doctype "html5"
+           :with-toc nil
+           )
+          ("blog-posts"
+           :base-directory "~/git/cerealbuster.gitlab.io/org/"
+           :base-extension "org"
+           :publishing-directory "~/git/cerealbuster.gitlab.io/"
+           :publishing-function org-html-publish-to-html
+           :recursive t
+           :headline-levels 4
+           :section-numbers nil
+           :auto-preamble t
+           :auto-sitemap t
+           :exclude "index.org\\|about.org"
+           :sitemap-filename "sitemap.org"
+           :sitemap-title "sitemap"
+           :sitemap-style list
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry my/sitemap-entry
+           :html-link-home "../../index.html"
+           :html-link-up "../../index.html"
+           :html-doctype "html5"
+           :with-toc nil)
+          ("org-static"
+           :base-directory "~/git/cerealbuster.gitlab.io/"
+           :publishing-directory "~/git/cerealbuster.gitlab.io/"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :recursive t
+           :publishing-function org-publish-attachment)
+          ("org" :components ("blog-posts" "static-sites" "org-static"))))
 #+END_SRC
 
 ** ob-hy
 #+BEGIN_SRC emacs-lisp
   (use-package ob-hy
-    :ensure t
-    :defer t)
+    :ensure t)
 #+END_SRC
 
 ** org-babel
@@ -1250,147 +1190,6 @@ This languages shoud be loaded when creating code
   :diminish golden-ratio-mode
   :init (setq golden-ratio-auto-scale t)
   :config (golden-ratio-mode 1))
-#+END_SRC
-* Org-Mode Settings
-** configure latex compiler
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-compiler "xelatex")
-#+END_SRC
-** configure pdflatex
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process
-      '("xelatex -interaction nonstopmode %f"
-        "bibtex %b"
-        "xelatex -interaction nonstopmode %f"
-        "xelatex -interaction nonstopmode %f"))
-#+END_SRC
-
-** Enable native intendations in sourc blocks
-
-#+BEGIN_SRC emacs-lisp
-(setq org-src-tab-acts-natively t)
-(setq org-src-preserve-indentation t)
-#+END_SRC
-
-** KOMA-SCRIPT
-we want koma script
-
-#+BEGIN_SRC emacs-lisp
-
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("koma-article" "\\documentclass{scrartcl}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-(with-eval-after-load "ox-latex"
-
-  (add-to-list 'org-latex-classes
-               '("koma-letter"
-                 "\\documentclass[11pt]{scrlttr2}"
-                 "\\usepackage[utf8]{inputenc}"
-                 "\\usepackage[T1]{fontenc}"
-                 "\\usepackage{xcolor}"
-                 ("\\section{%s}" . "\\section*{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
-
-#+END_SRC
-
-** europecv-class
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load "ox-latex"
-  (add-to-list 'org-latex-classes
-               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
-
-#+END_SRC
-
-** Plain lists
-
-#+BEGIN_SRC emacs-lisp
-(setq org-list-allow-alphabetical t)
-#+END_SRC
-
-** where is my agenda
-
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
-#+END_SRC
-
-** Org bullets makes things look pretty
-
-#+BEGIN_SRC emacs-lisp
-(setenv "BROWSER" "chromium-browser")
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-#+END_SRC
-
-** Org mu4e
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-mu4e)
-#+END_SRC
-
-** enable Markdown export
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (require 'ox-md nil t))
-#+END_SRC
-
-** Org-Journal
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-journal
-  :defer t
-  :ensure t
-  :init
-  (setq org-journal-dir "~/Dokumente/org-documents/journals")
-  (setq org-journal-file-format "%d-%m-%Y.org"))
-#+END_SRC
-
-** Org-Projects
-here are my project settings
-#+BEGIN_SRC emacs-lisp
-(setq org-publish-project-alist
-
-      '(("blog"
-         :base-directory "~/git/cerealbuster.gitlab.io/org"
-         :base-extension "org"
-         :publishing-directory "~/git/cerealbuster.gitlab.io/_posts/"
-         :recursive t
-         :publishing-function org-md-publish-to-md
-         :headline-levels 4)))
-#+END_SRC
-
-** ob-hy
-#+BEGIN_SRC emacs-lisp
-(use-package ob-hy
-  :ensure t)
-#+END_SRC
-
-** org-babel
-This languages shoud be loaded when creating code
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (clojure . t)
-   (hy . t)
-   (scheme . t)
-   (R . t)
-   (ein . t)))
-
-(setq org-babel-python-command "python3")
 #+END_SRC
 * Ledger Mode
   Lets try ledger mode
