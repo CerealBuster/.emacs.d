@@ -889,6 +889,26 @@ we use ESS for R
   (ein:use-company-backend t))
 #+END_SRC
 
+** Haskell
+#+BEGIN_SRC emacs-lisp
+(use-package haskell-mode
+  :ensure t
+  :config
+  (require 'haskell-interactive-mode)
+  (require 'haskell-process)
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+  (custom-set-variables '(haskell-process-type 'ghci))
+  (define-key haskel-mode-map (kbd "C-c C-c" 'haskell-compile))
+  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+  (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+  (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+  (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+  (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+  (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal))
+#+END_SRC
+
 * Org-Mode Settings
 ** configure latex compiler
 #+BEGIN_SRC emacs-lisp
