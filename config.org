@@ -924,6 +924,12 @@ we use ESS for R
 ;;         "xelatex -interaction nonstopmode %f"
 ;;         "xelatex -interaction nonstopmode %f"
 ;;))
+
+(setq org-latex-pdf-process
+      '("pdflatex -interaction nonstopmode -output-directory %o %f"
+        "bibtex %b"
+        "pdflatex -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -interaction nonstopmode -output-directory %o %f"))
 #+END_SRC
 
 ** Enable native intendations in sourc blocks
