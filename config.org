@@ -529,8 +529,8 @@ up :-)
 (use-package mu4e
   :commands mu4e
   :config
-  (setq mu4e-maildir "~/Maildir")
-  (setq mu4e-get-mail-command "offlineimap")
+  (setq mu4e-maildir "~/maildir")
+  (setq mu4e-get-mail-command "/home/raffael/.local/bin/run-getmail.sh")
   (setq mu4e-update-interval 1200)
   (setq mu4e-attachement-dir "~/Downloads")
   (setq user-full-name "Raffael Affolter")
@@ -556,11 +556,11 @@ up :-)
             :enter-func (lambda() (mu4e-message "Switch to Protonmail"))
             :match-func (lambda(msg)
                           (when msg
-                            (s-prefix? "/PROTONMAIL/" (mu4e-message-field msg :maildir))))
+                            (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
             :vars '((user-mail-address . "raffael.affolter@protonmail.ch")
-                    (mu4e-sent-folder . "/PROTONMAIL/Sent")
-                    (mu4e-drafts-folder . "/PROTONMAIL/Drafts-local")
-                    (mu4e-trash-folder . "/PROTONMAIL/Trash")
+                    (mu4e-sent-folder . "/Protonmail/Sent")
+                    (mu4e-drafts-folder . "/Protonmail/Drafts-local")
+                    (mu4e-trash-folder . "/Protonmail/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
                     (smtpmail-local-domain . "127.0.0.1")
@@ -754,24 +754,37 @@ Use python3 as default
 ** Paredit
 
 #+BEGIN_SRC emacs-lisp
-(use-package paredit
-  :ensure t
-  :diminish paredit-mode
-  :init
-  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-  (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
-  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-  (add-hook 'ielm-mode-hook 'enable-paredit-mode)
-  (add-hook 'json-mode-hook 'enable-paredit-mode)
-  (add-hook 'scheme-mode-hook 'enable-paredit-mode)
-  (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
-  (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
-  (add-hook 'hy-mode-hook 'enable-paredit-mode))
+;;(use-package paredit
+;;  :ensure t
+;;  :diminish paredit-mode
+;;  :config
+;;  (autoload 'enable-paredit-mode "paredit"
+;;    "Turn on pseudo-structural editing of Lisp code." t)
+;;  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+;;  ;(add-hook 'helm-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'json-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'scheme-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'geiser-repl-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'slime-repl-mode-hook 'enable-paredit-mode)
+;;  (add-hook 'hy-mode-hook 'enable-paredit-mode
+;; ;; (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+;;;;  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+;;)
+;;)
+
 #+END_SRC
 
+** Smartparens
+#+BEGIN_SRC emacs-lisp
+  (use-package smartparens
+    :ensure t
+    :hook ((lisp-mode emacs-lisp-mode json-mode scheme-mode geiser-repl-mode slime-repl-mode hy-mode clojure-mode cider-repl-mode) . smartparens-strict-mode)
+    :config
+    (require 'smartparens-config)
+    (sp-use-smartparens-bindings))
+#+END_SRC
 
 ** LISP settings
 
@@ -788,7 +801,6 @@ Use python3 as default
 
 (use-package clojure-mode-extra-font-locking
   :ensure t)
-
 #+END_SRC
 
 ** Cider
@@ -898,9 +910,8 @@ we use ESS for R
   (require 'haskell-process)
   (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
   (custom-set-variables '(haskell-process-type 'ghci))
-  (define-key haskel-mode-map (kbd "C-c C-c" 'haskell-compile))
+  (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile)
   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
   (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
   (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
   (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
@@ -927,6 +938,7 @@ we use ESS for R
 
 (setq org-latex-pdf-process
       '("pdflatex -interaction nonstopmode -output-directory %o %f"
+        "makeglossaries %b"
         "bibtex %b"
         "pdflatex -interaction nonstopmode -output-directory %o %f"
         "pdflatex -interaction nonstopmode -output-directory %o %f"))
