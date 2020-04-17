@@ -967,10 +967,8 @@ we use ESS for R
 
 (setq org-latex-pdf-process
       '("pdflatex -interaction nonstopmode -output-directory %o %f"
-        "makeglossaries %b"
-        "bibtex %b"
+        "bib2gls --group %b"
         "pdflatex -interaction nonstopmode -output-directory %o %f"
-        "makeglossaries %b"
         "bibtex %b"
         "pdflatex -interaction nonstopmode -output-directory %o %f"
         "pdflatex -interaction nonstopmode -output-directory %o %f"))
