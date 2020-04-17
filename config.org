@@ -248,6 +248,7 @@ I want that emacs opens in fullscreen
 
 ** Client settings
 
+Change how you kill buffers if you open emacs as client
 #+BEGIN_SRC emacs-lisp
 (add-hook 'server-switch-hook
           (lambda ()
@@ -256,6 +257,19 @@ I want that emacs opens in fullscreen
             (when server-buffer-clients
               (local-set-key (kbd "C-x k") 'server-edit))))
 #+END_SRC
+
+** Emacs daemon settings
+This function helps to shut down the emacs server and save any
+modified buffers
+
+#+BEGIN_SRC emacs-lisp
+(defun server-shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs))
+#+END_SRC
+
 
 * Evil
 
@@ -744,6 +758,12 @@ Use python3 as default
 (setq python-shell-interpreter "python3")
 #+END_SRC
 
+diminish eldoc-mode
+
+#+BEGIN_SRC emacs-lisp
+(diminish 'eldoc-mode)
+#+END_SRC
+
 ** realgud
 
 #+BEGIN_SRC  emacs-lisp
@@ -780,7 +800,18 @@ Use python3 as default
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
     :ensure t
-    :hook ((lisp-mode emacs-lisp-mode json-mode scheme-mode geiser-repl-mode slime-repl-mode hy-mode clojure-mode cider-repl-mode haskell-mode) . smartparens-strict-mode)
+    :diminish smartparens-mode
+    :hook ((lisp-mode
+            emacs-lisp-mode
+            json-mode scheme-mode
+            geiser-repl-mode
+            slime-repl-mode
+            hy-mode clojure-mode
+            cider-repl-mode
+            haskell-mode
+            haskell-interactive-mode
+            ess-mode
+            ein:ipynb-mode) . smartparens-strict-mode)
     :config
     (require 'smartparens-config)
     (sp-use-smartparens-bindings))
@@ -808,6 +839,7 @@ Use python3 as default
 #+BEGIN_SRC emacs-lisp
 (use-package cider
   :ensure t
+  :diminish cider-mode
   :config
   (add-hook 'cider-mode-hook #'eldoc-mode))
 
@@ -883,9 +915,7 @@ We want a good racket workspace
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
-  :ensure t
-  :config
-  (electric-pair-mode 1))
+  :ensure t)
 #+END_SRC
 
 ** Jupyter support
@@ -897,7 +927,6 @@ we use ESS for R
   :config
   (require 'ein-notebook)
   (require 'ein-subpackages)
-  (electric-pair-mode 0)
   (ein:use-company-backend t))
 #+END_SRC
 
@@ -938,7 +967,8 @@ we use ESS for R
 
 (setq org-latex-pdf-process
       '("pdflatex -interaction nonstopmode -output-directory %o %f"
-        "makeglossaries %b"
+        "bib2gls --group %b"
+        "pdflatex -interaction nonstopmode -output-directory %o %f"
         "bibtex %b"
         "pdflatex -interaction nonstopmode -output-directory %o %f"
         "pdflatex -interaction nonstopmode -output-directory %o %f"))
@@ -1218,7 +1248,8 @@ This languages shoud be loaded when creating code
    (hy . t)
    (scheme . t)
    (R . t)
-   (ein .t )))
+   (ein .t )
+   (shell . t)))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
 #+END_SRC
