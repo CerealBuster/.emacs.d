@@ -310,12 +310,20 @@ modified buffers
 (diminish 'undo-tree-mode)
 
 (use-package pdf-tools
+  :ensure t
   :config
   (evil-set-initial-state 'pdf-view-mode 'emacs)
   (add-hook 'pdf-view-mode-hook
             (lambda ()
               (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+  (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))
   (pdf-tools-install))
+
+
+;;(setq TeX-view-program-selection '((output-pdf "pdf-tools"))
+ ;;       TeX-view-program-list  '(("PDF Tools" TeX-pdf-tools-sync-view))
+  ;;      TeX-source-correlate-start-server t)
 
 (use-package evil-smartparens
   :ensure t
@@ -446,11 +454,20 @@ modified buffers
   :ensure t)
 #+END_SRC
 
+*** leuven
+#+begin_src emacs-lisp
+(use-package leuven-theme
+  :ensure t
+  :config
+  (setq org-fontify-whole-heading-line t))
+#+end_src
+
 *** load theme
 #+BEGIN_SRC emacs-lisp
 
 ;;(use-package color-theme :ensure t)
-(load-theme 'gruvbox-light-hard t)
+;;(load-theme 'gruvbox-light-hard t)
+(load-theme 'leuven t)
 
 ;;(load-theme 'sanityinc-tomorrow-eighties t)
 #+END_SRC
@@ -933,11 +950,7 @@ we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
-  :defer t
-  :config
-  (require 'ein-notebook)
-  (require 'ein-subpackages)
-  (ein:use-company-backend t))
+  :defer t)
 #+END_SRC
 
 ** Haskell
@@ -967,6 +980,13 @@ we use ESS for R
 #+END_SRC
 
 * Org-Mode Settings
+** org easy templates
+This section maybe gets removed but i lost the org easy templates
+
+#+begin_src emacs-lisp
+(require 'org-tempo)
+#+end_src
+
 ** configure latex compiler
 #+BEGIN_SRC emacs-lisp
 ;;  (setq org-latex-compiler "xelatex")
@@ -1278,6 +1298,19 @@ This languages shoud be loaded when creating code
    (gnuplot . t)))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
+#+END_SRC
+
+** org-babel-eval-in-repl
+
+Sometimes its nice to just evaluate the codeblock in the repl
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-babel-eval-in-repl
+  :ensure t
+  :after ob
+  :config
+  (define-key org-mode-map (kbd "C-<return>") 'ober-eval-in-repl)
+  (define-key org-mode-map (kbd "M-S-<return>") 'ober-eval-block-in-repl))
 #+END_SRC
 
 ** hooks for orgmode
