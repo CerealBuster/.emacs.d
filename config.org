@@ -793,7 +793,8 @@ diminish eldoc-mode
 
 #+BEGIN_SRC  emacs-lisp
 (use-package realgud
-  :ensure t)
+  :ensure t
+  :defer t)
 #+END_SRC
 
 ** Paredit
@@ -1176,6 +1177,11 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+END_SRC
+** Subfigures
+   #+begin_src emacs-lisp
+(use-package ox-latex-subfigure
+  :ensure t)
+   #+end_src
 
 ** Org mu4e
 
