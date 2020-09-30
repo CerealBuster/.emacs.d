@@ -457,9 +457,7 @@ modified buffers
 *** leuven
 #+begin_src emacs-lisp
 (use-package leuven-theme
-  :ensure t
-  :config
-  (setq org-fontify-whole-heading-line t))
+  :ensure t)
 #+end_src
 
 *** load theme
@@ -1014,8 +1012,9 @@ This section maybe gets removed but i lost the org easy templates
 ** Enable native intendations in sourc blocks
 
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-tab-acts-natively t)
-  (setq org-src-preserve-indentation t)
+(setq org-src-tab-acts-natively t)
+(setq org-src-preserve-indentation t)
+(setq org-fontify-whole-heading-line t)
 #+END_SRC
 
 ** KOMA-SCRIPT
