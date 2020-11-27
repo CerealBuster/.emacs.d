@@ -303,9 +303,6 @@ modified buffers
       "b" 'evil-buffer
       "q" 'evil-quit)))
 
-(use-package evil-magit
-  :ensure t)
-
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
 
@@ -514,8 +511,8 @@ then also loads the airline theme again so the modeline is not messed
 up :-)
 
 #+BEGIN_SRC emacs-lisp
-(setq light-theme 'gruvbox-light-hard)
-(setq dark-theme 'gruvbox-dark-hard)
+(setq light-theme 'leuven)
+(setq dark-theme 'leuven-dark)
 
 (setq active-theme light-theme)
 
