@@ -292,6 +292,7 @@ modified buffers
 
 
 (use-package evil-leader
+  :after evil
   :ensure t
   :init (global-evil-leader-mode)
   :config
@@ -1055,6 +1056,20 @@ we want koma script
                  '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
 
 #+END_SRC
+
+* ACMART
+
+#+begin_src emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("acmart" "\\documentclass{acmart}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+#+end_src
+
 ** org latex settings
 
 I want to use minted to highlight my code.
@@ -1338,3 +1353,19 @@ Update dynamic blocks before saving
 (use-package ledger-mode
   :ensure t)
 #+END_SRC
+
+* Writegood Mode
+
+#+begin_src emacs-lisp
+(use-package writegood-mode
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c g") 'writegood-mode)
+  (global-set-key (kbd "C-c C-g g") 'writegood-grade-level)
+  (global-set-key (kbd "C-c C-g e") 'writegood-reading-ease))
+#+end_src
+* Centered window mode
+#+begin_src emacs-lisp
+(use-package centered-window
+  :ensure t)
+#+end_src
