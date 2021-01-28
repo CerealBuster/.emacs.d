@@ -1369,3 +1369,57 @@ Update dynamic blocks before saving
 (use-package centered-window
   :ensure t)
 #+end_src
+
+* Skeletons
+
+#+begin_src emacs-lisp
+
+(define-skeleton new-publication
+  "Inserts a pubication skeletion into the current buffer
+The buffer should be emtpy"
+  nil
+  "#+options: ':nil *:t -:t ::t <:t H:3 \\n:nil ^:t arch:headline\n"
+  "#+options: author:nil broken-links:nil c:nil creator:nil\n"
+  "#+options: d:(not LOGBOOK) date:t e:t email:nil f:t inline:t num:t\n"
+  "#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t\n"
+  "#+options: timestamp:t title:nil toc:nil todo:t |:t\n"
+  "#+title: " (file-name-base buffer-file-name) "\n"
+  "#+latex_class: acmart\n"
+  "#+latex_class_options: [11pt,nonacm,screen,acmsmall,urlbreakonhyphens,review=true,anonymous=false]\n"
+  "#+latex_header: \\usepackage{natbib}\n"
+  "#+latex_header: \\author{Raffael Affolter}\n"
+  "#+latex_header: \\email{raffael.affolter@virtopsy.com}\n"
+  "#+latex_header:\\affiliation{ \\institution{University of Zurich}\\department{Institute of Forensic Medicine}\\streetaddress{Winterthurerstrasse 190/52}\\city{Zurich} \\country{Switzerland} \\postcode{CH-8057}}\n"
+  "#+latex_header_extra:\n"
+  "#+description:\n"
+  "#+keywords:\n"
+  "#+subtitle:\n"
+  "#+latex_compiler: pdflatex\n"
+  "#+date: \\today\n"
+  "\\setcopyright{none}\n"
+  "#+begin_abstract\n"
+  "1. General statement introducing broad research area of the particular topic\n"
+  "2. Explanation of the specific problem (difficulties, obstacles challenge) to be solved\n"
+  "3. Review of existing or standard solutions to this problem and their limitations\n"
+  "4. An outline of the proposed new solution\n"
+  "5. A summary of how the solution was evaluated and what the outcomes of the evaluation where\n"
+  "#+end_abstract\n"
+  "\\maketitle\n"
+  "* Introduction\n"
+  "1. why is the problem interesting?\n"
+  "2. what are the relevant issues?\n"
+  "3. why is the taken apporoach good?\n"
+  "4. why are the outcomes significant?\n"
+  "* Methodology\n\n"
+  "* Results\n\n"
+  "* Discussion\n\n"
+  "* Conclusions\n\n"
+  "Draw together the topics discussed and look beyond\n"
+  "#+begin_acks\n\n"
+  "Acknowledgements\n"
+  "#+end_acks\n\n"
+  "bibliographystyle:ACM-Reference-Format\n"
+  "bibliography:"(car my-default-bibfile)"\n"
+
+  )
+#+end_src
