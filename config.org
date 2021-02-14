@@ -292,6 +292,7 @@ modified buffers
 
 
 (use-package evil-leader
+  :after evil
   :ensure t
   :init (global-evil-leader-mode)
   :config
@@ -302,9 +303,6 @@ modified buffers
       "s" 'flyspell-buffer
       "b" 'evil-buffer
       "q" 'evil-quit)))
-
-(use-package evil-magit
-  :ensure t)
 
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
@@ -512,8 +510,8 @@ then also loads the airline theme again so the modeline is not messed
 up :-)
 
 #+BEGIN_SRC emacs-lisp
-(setq light-theme 'gruvbox-light-hard)
-(setq dark-theme 'gruvbox-dark-hard)
+(setq light-theme 'leuven)
+(setq dark-theme 'leuven-dark)
 
 (setq active-theme light-theme)
 
@@ -1057,6 +1055,20 @@ we want koma script
                  '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
 
 #+END_SRC
+
+* ACMART
+
+#+begin_src emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("acmart" "\\documentclass{acmart}"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+#+end_src
+
 ** org latex settings
 
 I want to use minted to highlight my code.
@@ -1340,3 +1352,73 @@ Update dynamic blocks before saving
 (use-package ledger-mode
   :ensure t)
 #+END_SRC
+
+* Writegood Mode
+
+#+begin_src emacs-lisp
+(use-package writegood-mode
+  :ensure t
+  :config
+  (global-set-key (kbd "C-c g") 'writegood-mode)
+  (global-set-key (kbd "C-c C-g g") 'writegood-grade-level)
+  (global-set-key (kbd "C-c C-g e") 'writegood-reading-ease))
+#+end_src
+* Centered window mode
+#+begin_src emacs-lisp
+(use-package centered-window
+  :ensure t)
+#+end_src
+
+* Skeletons
+
+#+begin_src emacs-lisp
+
+(define-skeleton new-publication
+  "Inserts a pubication skeletion into the current buffer
+The buffer should be emtpy"
+  nil
+  "#+options: ':nil *:t -:t ::t <:t H:3 \\n:nil ^:t arch:headline\n"
+  "#+options: author:nil broken-links:nil c:nil creator:nil\n"
+  "#+options: d:(not LOGBOOK) date:t e:t email:nil f:t inline:t num:t\n"
+  "#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t\n"
+  "#+options: timestamp:t title:nil toc:nil todo:t |:t\n"
+  "#+title: " (file-name-base buffer-file-name) "\n"
+  "#+latex_class: acmart\n"
+  "#+latex_class_options: [11pt,nonacm,screen,acmsmall,urlbreakonhyphens,review=true,anonymous=false]\n"
+  "#+latex_header: \\usepackage{natbib}\n"
+  "#+latex_header: \\author{Raffael Affolter}\n"
+  "#+latex_header: \\email{raffael.affolter@virtopsy.com}\n"
+  "#+latex_header:\\affiliation{ \\institution{University of Zurich}\\department{Institute of Forensic Medicine}\\streetaddress{Winterthurerstrasse 190/52}\\city{Zurich} \\country{Switzerland} \\postcode{CH-8057}}\n"
+  "#+latex_header_extra:\n"
+  "#+description:\n"
+  "#+keywords:\n"
+  "#+subtitle:\n"
+  "#+latex_compiler: pdflatex\n"
+  "#+date: \\today\n"
+  "\\setcopyright{none}\n"
+  "#+begin_abstract\n"
+  "1. General statement introducing broad research area of the particular topic\n"
+  "2. Explanation of the specific problem (difficulties, obstacles challenge) to be solved\n"
+  "3. Review of existing or standard solutions to this problem and their limitations\n"
+  "4. An outline of the proposed new solution\n"
+  "5. A summary of how the solution was evaluated and what the outcomes of the evaluation where\n"
+  "#+end_abstract\n"
+  "\\maketitle\n"
+  "* Introduction\n"
+  "1. why is the problem interesting?\n"
+  "2. what are the relevant issues?\n"
+  "3. why is the taken apporoach good?\n"
+  "4. why are the outcomes significant?\n"
+  "* Methodology\n\n"
+  "* Results\n\n"
+  "* Discussion\n\n"
+  "* Conclusions\n\n"
+  "Draw together the topics discussed and look beyond\n"
+  "#+begin_acks\n\n"
+  "Acknowledgements\n"
+  "#+end_acks\n\n"
+  "bibliographystyle:ACM-Reference-Format\n"
+  "bibliography:"(car my-default-bibfile)"\n"
+
+  )
+#+end_src
