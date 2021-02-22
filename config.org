@@ -225,6 +225,15 @@ we want to auto update our packages
     (set-face-attribute 'default nil :font "Hack" :height 110))
 #+END_SRC
 
+** undo tree mode
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :init (global-undo-tree-mode))
+#+end_src
+
+#+RESULTS:
+
 ** winner mode
 
 Allows to ‘undo’ (and ‘redo’) changes in the window configuration with
@@ -280,6 +289,7 @@ modified buffers
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
+  (setq evil-undo-system 'undo-tree)
   :config
   (global-set-key (kbd "M-x")'execute-extended-command)
   (evil-mode 1))
@@ -310,7 +320,7 @@ modified buffers
 (use-package pdf-tools
   :ensure t
   :config
-  (evil-set-initial-state 'pdf-view-mode 'emacs)
+;;  (evil-set-initial-state 'pdf-view-mode 'emacs)
   (add-hook 'pdf-view-mode-hook
             (lambda ()
               (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
@@ -760,9 +770,9 @@ No trailing white spaces except in makrdowns
 highlight fixme todo and bug statement
 
 #+BEGIN_SRC emacs-lisp
-(use-package fixme-mode
-  :ensure t
-  :config (fixme-mode nil))
+;;(use-package fixme-mode
+;;  :ensure t
+;;  :config (fixme-mode nil))
 #+END_SRC
 
 highlight all characters which are over the column 80
@@ -1056,7 +1066,7 @@ we want koma script
 
 #+END_SRC
 
-* ACMART
+** ACMART
 
 #+begin_src emacs-lisp
 (with-eval-after-load "ox-latex"
@@ -1085,6 +1095,12 @@ I want to use minted to highlight my code.
   (setq org-list-allow-alphabetical t)
 
 #+END_SRC
+
+** Hyperlink display
+For easier writing i will use literal links
+#+begin_src emacs-lisp
+(setq org-descriptive-links nil)
+#+end_src
 
 ** where is my agenda
 
@@ -1137,7 +1153,7 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
   :ensure t
-  :commands org-ref-bibtex-hydra/body
+  ;;:commands org-ref-bibtex-hydra/body
   :config
   (setq org-ref-notes-directory my-bibtex-dir
         org-ref-default-bibliography my-default-bibfile
@@ -1336,6 +1352,15 @@ Update dynamic blocks before saving
 #+BEGIN_SRC emacs-lisp
 (add-hook 'before-save-hook 'org-update-all-dblocks)
 #+END_SRC
+
+** org export settings
+I prefer that org uses emacs to visit pdfs
+#+begin_src emacs-lisp
+(setq org-file-apps '((auto-mode . emacs)
+                      ("\\.mm\\'" . default)
+                      ("\\.x?html?\\'" . default)
+                      ("\\.pdf\\'" . emacs)))
+#+end_src
 
 * Golden Ratio
 
