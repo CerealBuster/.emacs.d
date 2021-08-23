@@ -1,5 +1,6 @@
+#+startup: overview
 #+TITLE: Emacs configuration
-#+AUTHOR: Raffael Affolter
+#+AUTHOR: Raffael Golomingi
 
 * diminish
 
@@ -219,10 +220,15 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
-  (add-to-list 'default-frame-alist '(font . "Hack-11"))
+;;  (add-to-list 'default-frame-alist '(font . "Hack-11"))
 
-  (when (member "Hack" (font-family-list))
-    (set-face-attribute 'default nil :font "Hack" :height 110))
+;;  (when (member "Hack" (font-family-list))
+;;    (set-face-attribute 'default nil :font "Hack" :height 110))
+
+  (add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+
+  (when (member "IBM Plex Mono" (font-family-list))
+    (set-face-attribute 'default nil :font "IBM Plex Mono" :height 110))
 #+END_SRC
 
 ** undo tree mode
@@ -360,13 +366,14 @@ modified buffers
   (require 'helm-config)
   :config
   (helm-mode 1)
-  (setq helm-autoresize-mode t)
+  ;;(setq helm-autoresize-mode t)
   (setq helm-buffer-max-length 40)
   (global-set-key (kbd "M-x") #'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
   (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
 #+END_SRC
+
 
 ** Helm projectile
 
@@ -556,9 +563,10 @@ up :-)
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
   :ensure t
-  :config (progn
-            (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
+  :config
+  (setq plantuml-default-exec-mode 'jar)
+  (setq org-plantuml-jar-path (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
 
 #+END_SRC
 
@@ -572,11 +580,11 @@ up :-)
 (use-package mu4e
   :commands mu4e
   :config
-  (setq mu4e-maildir "~/maildir")
-  (setq mu4e-get-mail-command "/home/raffael/.local/bin/run-getmail.sh")
+  (setq mu4e-maildir "~/Maildir")
+  (setq mu4e-get-mail-command "offlineimap")
   (setq mu4e-update-interval 1200)
   (setq mu4e-attachement-dir "~/Downloads")
-  (setq user-full-name "Raffael Affolter")
+  (setq user-full-name "Raffael Golomingi")
   (setq mail-user-agent 'mu4e-user-agent)
   (setq mu4e-view-show-adresses t)
   (setq mu4e-view-show-images t)
@@ -600,14 +608,14 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.affolter@protonmail.ch")
+            :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
                     (mu4e-sent-folder . "/Protonmail/Sent")
                     (mu4e-drafts-folder . "/Protonmail/Drafts-local")
                     (mu4e-trash-folder . "/Protonmail/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
                     (smtpmail-local-domain . "127.0.0.1")
-                    (smtpmail-smtp-user . "raffael.affolter@protonmail.ch")
+                    (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 1025)))
 
@@ -617,14 +625,14 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "affolraf@students.zhaw.ch")
+            :vars '((user-mail-address . "afft@zhaw.ch")
                     (mu4e-sent-folder . "/ZHAW/Sent")
                     (mu4e-drafts-folder . "/ZHAW/Drafts")
                     (mu4e-trash-folder . "/ZHAW/Trash")
                     (smtpmail-default-smtp-server . "smtp.office365.com")
                     (smtpmail-smtp-server . "smtp.office365.com")
                     (smtpmail-local-domain . "office365.com")
-                    (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
+                    (smtpmail-smtp-user . "afft@zhaw.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 587)))
           ,(make-mu4e-context
@@ -651,19 +659,19 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.affolter@uzh.ch")
+            :vars '((user-mail-address . "raffael.golomingi@uzh.ch")
                     (mu4e-sent-folder . "/UZH/Gesendet")
                     (mu4e-drafts-folder . "/UZH/Drafts")
                     (mu4e-trash-folder . "/UZH/Trash")
                     (smtpmail-default-smtp-server . "smtp.uzh.ch")
                     (smtpmail-smtp-server . "smtp.uzh.ch")
                     (smtpmail-local-domain . "uzh.ch")
-                    (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
+                    (smtpmail-smtp-user . "raffael.golomingi@uzh.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 587)))))
 
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
-  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+;;  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
   (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "de_CH"))))
 #+END_SRC
@@ -951,6 +959,7 @@ We want a good racket workspace
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
+  :init (load "ess-autoloads")
   :ensure t)
 #+END_SRC
 
@@ -1329,7 +1338,8 @@ This languages shoud be loaded when creating code
    (R . t)
    (ein .t )
    (shell . t)
-   (gnuplot . t)))
+   (gnuplot . t)
+   (plantuml . t)))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
 #+END_SRC
@@ -1396,6 +1406,7 @@ I prefer that org uses emacs to visit pdfs
 #+end_src
 
 * Skeletons
+** Publication skeleton
 
 #+begin_src emacs-lisp
 
@@ -1447,4 +1458,34 @@ The buffer should be emtpy"
   "bibliography:"(car my-default-bibfile)"\n"
 
   )
+#+end_src
+
+** Blog skeleton
+#+begin_src emacs-lisp
+(define-skeleton new-blog-entry-skel
+  "Inserts a new blog skeleton into the current buffer"
+  nil
+  (org-export-insert-default-template 'default)
+  "#+options: html-link-use-abs-url:nil html-postamble:auto\n"
+  "#+options: html-preamble:t html-scripts:t html-style:t\n"
+  "#+options: html5-fancy:nil tex:t\n"
+  "#+html_doctype: html5\n"
+  "#+html_container: article\n"
+  "#+description:\n"
+  "#+keywords:\n"
+  "#+html_link_home: ../../index.html\n"
+  "#+html_link_up: ../../index.html\n"
+  "#+html_mathjax:\n"
+  "#+html_equation_reference_format: \eqref{%s}"
+  "#+html_head:\n"
+  "#+html_head_extra: <link rel=stylesheet type=text/css href=../../css/main.css />\n"
+  "#+infojs_opt:\n"
+  "#+creator: <a href=https://www.gnu.org/software/emacs/ >Emacs</a> 26.3 (<a href= https://orgmode.org>Org</a> mode 9.1.9)\n"
+  "\n"
+  "#+include: ../../../includes/disqus.html export html\n")
+
+(defun new-blog-entry ()
+  (interactive)
+  (find-file (name-blog-file))
+  (new-blog-entry-skel))
 #+end_src
