@@ -303,7 +303,9 @@ modified buffers
 (use-package evil-collection
   :after evil
   :ensure t
-  :config
+  :custom
+  (evil-collection-calendar-want-org-bindings t)
+  :init
   (evil-collection-init))
 
 
