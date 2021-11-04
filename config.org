@@ -324,6 +324,7 @@ modified buffers
 
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
+(diminish 'evil-collection-unimpaired-mode)
 
 (use-package pdf-tools
   :ensure t
@@ -343,6 +344,7 @@ modified buffers
 
 (use-package evil-smartparens
   :ensure t
+  :diminish evil-smartparens-mode
   :config
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 #+END_SRC
@@ -353,9 +355,9 @@ modified buffers
 (use-package projectile
   :ensure t
   :defer t
+  :diminish projectile-mode
   :config
   (projectile-global-mode))
-
 #+END_SRC
 
 * Helm
@@ -588,16 +590,20 @@ up :-)
   (setq mu4e-attachement-dir "~/Downloads")
   (setq user-full-name "Raffael Golomingi")
   (setq mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-view-use-gnus t)
   (setq mu4e-view-show-adresses t)
   (setq mu4e-view-show-images t)
   (setq message-send-mail-function 'smtpmail-send-it)
   (setq message-kill-buffer-on-exit t)
   (setq mu4e-context-policy 'pick-first)
-  (setq mu4e-compose-signature t my-signature-file "~/.signature")
+  ;;(setq mu4e-compose-signature t my-signature-file "~/.signature")
+  (setq mu4e-compose-signature-auto-include nil)
   (setq mu4e-compose-dont-reply-to-self t)
+
   ;;because we have problem with some mails
-  (setq shr-color-visible-luminance-min 60)
-  (setq shr-color-visible-distance-min 5)
+  (setq shr-use-colors nil)
+  ;;(setq shr-color-visible-luminance-min 60)
+  ;;(setq shr-color-visible-distance-min 5)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   ;(add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.ch")
   ;(add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.com")
@@ -676,7 +682,16 @@ up :-)
 ;;  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
   (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "de_CH"))))
+
+(use-package mu4e-icalendar
+  :after (mu4e)
+  :config
+  (mu4e-icalendar-setup)
+  (setq gnus-icalendar-org-capture-file "~/Dokumente/org-documents/agenda.org")
+  (setq gnus-icalendar-org-capture-headline '("Termine"))
+  (gnus-icalendar-org-setup))
 #+END_SRC
+
 
 * flyspell
 we want flyspell to be enabled by default in text org and latex files
@@ -700,6 +715,26 @@ also easy swich between english and german
 
 (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
 #+END_SRC
+
+
+* Languagetool
+
+ #+begin_src emacs-lisp
+(use-package languagetool
+  :ensure t
+  :config
+  (setq languagetool-language-tool-jar
+        "~/.languagetool/languagetool-commandline.jar")
+  (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
+  (setq languagetool-default-language "de-CH")
+  (global-set-key (kbd "C-c l c") 'languagetool-check)
+  (global-set-key (kbd "C-c l d") 'languagetool-clear-buffer)
+  (global-set-key (kbd "C-c l p") 'languagetool-correct-at-point)
+  (global-set-key (kbd "C-c l b") 'languagetool-correct-buffer)
+  (global-set-key (kbd "C-c l l") 'languagetool-set-language)
+  )
+ #+end_src
+
 
 * Markdown
 #+BEGIN_SRC emacs-lisp
@@ -766,7 +801,7 @@ Two spaces for programming languages
 auto indent with return key
 
 #+BEGIN_SRC emacs-lisp
-(define-key global-map (kbd "RET") 'newline-and-indent)
+;(define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
 No trailing white spaces except in makrdowns
@@ -1150,7 +1185,7 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
   (let ((name (read-string "Name: ")))
     (expand-file-name (format "%s/%s-%s.org"
                               (format-time-string "%Y")
-                              (format-time-string "%Y-%m-%d")
+                             (format-time-string "%Y-%m-%d")
                               name) "~/git/cerealbuster.gitlab.io/org/posts/")))
 
 (setq org-capture-templates
@@ -1158,7 +1193,28 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
          "* TODO %?\n  %u\n  %a")
         ("b" "New blog entry" plain (file name-blog-file)
          (file "~/git/cerealbuster.gitlab.io/templates/blog-capture.org"))))
+
+;;("#" "used by gnus-icalendar-org" entry
+;; (file+olp+datetree  "~/Dokumente/org-documents/agenda.org")
+;; "%i" :immediate-finish t)
+
+
+;(defun my-catch-event-time (orig-fun &rest args)
+;  "Set org-overriding-default-time to the start time of the capture event"
+;  (let ((org-overriding-default-time (date-to-time
+;                                      (gnus-icalendar-event:start (car args)))))
+;    (apply orig-fun args)))
+
+;(advice-add 'gnus-icalendar:org-event-save :around #'my-catch-event-time)
 #+END_SRC
+
+#+RESULTS:
+
+** Citeproc
+   #+begin_src emacs-lisp
+(use-package citeproc
+  :ensure t)
+   #+end_src
 
 ** Org-Ref
 
@@ -1230,6 +1286,41 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
   (use-package org-mu4e)
 
 #+END_SRC
+
+** OrgMsg
+   #+begin_src emacs-lisp
+(use-package org-msg
+  :ensure t
+  :config
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq
+   org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+	 org-msg-startup "hidestars indent inlineimages"
+	 org-msg-greeting-fmt "\nHallo%s\n\n"
+	 org-msg-greeting-name-limit 3
+	 org-msg-default-alternatives '((new		. (text html))
+				                          (reply-to-html	. (text html))
+				                          (reply-to-text	. (text)))
+	 org-msg-convert-citation t
+	 org-msg-signature "
+Beste Grüsse
+Raffael
+
+,#+begin_signature
+--
+
+,#+include: \"~/.signature\"
+
+,#+end_signature")
+(org-msg-mode)
+(dolist (cur org-msg-enforce-css)
+  (when (and (assoc 'font-family (caddr cur))
+	     (not (string= (assoc-default 'font-family (caddr cur)) "monospace")))
+    (setf (alist-get 'font-family (caddr cur)) "\"IBM Plex Sans\"")
+    (when (assoc 'font-size (caddr cur))
+      (setf (alist-get 'font-size (caddr cur)) "12pt"))))
+)
+   #+end_src
 
 ** enable Markdown export
 
