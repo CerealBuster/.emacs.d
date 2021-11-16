@@ -558,8 +558,9 @@ up :-)
   :ensure t
   :config
   (dashboard-setup-startup-hook)
-  (setq initial-buffer-choice (lambda ()
-                                (get-buffer "*dashboard*"))))
+  (if (daemonp)
+      (setq initial-buffer-choice (lambda ()
+                                    (get-buffer "*dashboard*")))))
 #+END_SRC
 
 * Plantuml
@@ -996,8 +997,10 @@ We want a good racket workspace
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
-  :init (load "ess-autoloads")
-  :ensure t)
+  :ensure t
+  :init (require 'ess-site)
+  ;(load "ess-autoloads")
+  )
 #+END_SRC
 
 ** Jupyter support
