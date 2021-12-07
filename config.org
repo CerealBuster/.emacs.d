@@ -727,6 +727,7 @@ also easy swich between english and german
   (setq languagetool-language-tool-jar
         "~/.languagetool/languagetool-commandline.jar")
   (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
+  (setq languagetool-mother-tongue t)
   (setq languagetool-default-language "de-CH")
   (global-set-key (kbd "C-c l c") 'languagetool-check)
   (global-set-key (kbd "C-c l d") 'languagetool-clear-buffer)
@@ -789,13 +790,15 @@ Use 2 spaces instead of tab.
 intendation cannot insert tabs
 
 #+BEGIN_SRC emacs-lisp
-(setq-default inent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 
 Two spaces for programming languages
 
 #+BEGIN_SRC emacs-lisp
-(setq python-indent 2)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq python-indent-offset 4)))
 (setq js-indent-level 2)
 #+END_SRC
 
