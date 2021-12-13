@@ -558,8 +558,9 @@ up :-)
   :ensure t
   :config
   (dashboard-setup-startup-hook)
-  (setq initial-buffer-choice (lambda ()
-                                (get-buffer "*dashboard*"))))
+  (if (daemonp)
+      (setq initial-buffer-choice (lambda ()
+                                    (get-buffer "*dashboard*")))))
 #+END_SRC
 
 * Plantuml
@@ -726,6 +727,7 @@ also easy swich between english and german
   (setq languagetool-language-tool-jar
         "~/.languagetool/languagetool-commandline.jar")
   (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
+  (setq languagetool-mother-tongue t)
   (setq languagetool-default-language "de-CH")
   (global-set-key (kbd "C-c l c") 'languagetool-check)
   (global-set-key (kbd "C-c l d") 'languagetool-clear-buffer)
@@ -794,7 +796,9 @@ intendation cannot insert tabs
 Two spaces for programming languages
 
 #+BEGIN_SRC emacs-lisp
-(setq python-indent 2)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq python-indent-offset 4)))
 (setq js-indent-level 2)
 #+END_SRC
 
@@ -996,8 +1000,10 @@ We want a good racket workspace
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
-  :init (load "ess-autoloads")
-  :ensure t)
+  :ensure t
+  :init (require 'ess-site)
+  ;(load "ess-autoloads")
+  )
 #+END_SRC
 
 ** Jupyter support
