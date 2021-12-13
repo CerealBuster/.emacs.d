@@ -788,7 +788,7 @@ Use 2 spaces instead of tab.
 intendation cannot insert tabs
 
 #+BEGIN_SRC emacs-lisp
-(setq-default inent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 
 Two spaces for programming languages
@@ -1133,6 +1133,7 @@ I want to use minted to highlight my code.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-listings 'minted)
+(setq org-latex-prefer-user-labels t)
 #+END_SRC
 
 ** Plain lists
