@@ -1,5 +1,6 @@
+#+startup: overview
 #+TITLE: Emacs configuration
-#+AUTHOR: Raffael Affolter
+#+AUTHOR: Raffael Golomingi
 
 * diminish
 
@@ -219,10 +220,15 @@ we want to auto update our packages
 
 #+BEGIN_SRC emacs-lisp
 
-  (add-to-list 'default-frame-alist '(font . "Hack-11"))
+;;  (add-to-list 'default-frame-alist '(font . "Hack-11"))
 
-  (when (member "Hack" (font-family-list))
-    (set-face-attribute 'default nil :font "Hack" :height 110))
+;;  (when (member "Hack" (font-family-list))
+;;    (set-face-attribute 'default nil :font "Hack" :height 110))
+
+  (add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+
+  (when (member "IBM Plex Mono" (font-family-list))
+    (set-face-attribute 'default nil :font "IBM Plex Mono" :height 110))
 #+END_SRC
 
 ** undo tree mode
@@ -297,7 +303,9 @@ modified buffers
 (use-package evil-collection
   :after evil
   :ensure t
-  :config
+  :custom
+  (evil-collection-calendar-want-org-bindings t)
+  :init
   (evil-collection-init))
 
 
@@ -316,6 +324,7 @@ modified buffers
 
 ;; don't show name in modeline
 (diminish 'undo-tree-mode)
+(diminish 'evil-collection-unimpaired-mode)
 
 (use-package pdf-tools
   :ensure t
@@ -335,6 +344,7 @@ modified buffers
 
 (use-package evil-smartparens
   :ensure t
+  :diminish evil-smartparens-mode
   :config
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
 #+END_SRC
@@ -345,9 +355,9 @@ modified buffers
 (use-package projectile
   :ensure t
   :defer t
+  :diminish projectile-mode
   :config
   (projectile-global-mode))
-
 #+END_SRC
 
 * Helm
@@ -360,13 +370,14 @@ modified buffers
   (require 'helm-config)
   :config
   (helm-mode 1)
-  (setq helm-autoresize-mode t)
+  ;;(setq helm-autoresize-mode t)
   (setq helm-buffer-max-length 40)
   (global-set-key (kbd "M-x") #'helm-M-x)
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
   (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
 #+END_SRC
+
 
 ** Helm projectile
 
@@ -545,8 +556,9 @@ up :-)
   :ensure t
   :config
   (dashboard-setup-startup-hook)
-  (setq initial-buffer-choice (lambda ()
-                                (get-buffer "*dashboard*"))))
+  (if (daemonp)
+      (setq initial-buffer-choice (lambda ()
+                                    (get-buffer "*dashboard*")))))
 #+END_SRC
 
 * Plantuml
@@ -554,9 +566,10 @@ up :-)
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
   :ensure t
-  :config (progn
-            (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
+  :config
+  (setq plantuml-default-exec-mode 'jar)
+  (setq org-plantuml-jar-path (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+  (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
 
 #+END_SRC
 
@@ -570,22 +583,26 @@ up :-)
 (use-package mu4e
   :commands mu4e
   :config
-  (setq mu4e-maildir "~/maildir")
-  (setq mu4e-get-mail-command "/home/raffael/.local/bin/run-getmail.sh")
+  (setq mu4e-maildir "~/Maildir")
+  (setq mu4e-get-mail-command "offlineimap")
   (setq mu4e-update-interval 1200)
   (setq mu4e-attachement-dir "~/Downloads")
-  (setq user-full-name "Raffael Affolter")
+  (setq user-full-name "Raffael Golomingi")
   (setq mail-user-agent 'mu4e-user-agent)
+  (setq mu4e-view-use-gnus t)
   (setq mu4e-view-show-adresses t)
   (setq mu4e-view-show-images t)
   (setq message-send-mail-function 'smtpmail-send-it)
   (setq message-kill-buffer-on-exit t)
   (setq mu4e-context-policy 'pick-first)
-  (setq mu4e-compose-signature t my-signature-file "~/.signature")
+  ;;(setq mu4e-compose-signature t my-signature-file "~/.signature")
+  (setq mu4e-compose-signature-auto-include nil)
   (setq mu4e-compose-dont-reply-to-self t)
+
   ;;because we have problem with some mails
-  (setq shr-color-visible-luminance-min 60)
-  (setq shr-color-visible-distance-min 5)
+  (setq shr-use-colors nil)
+  ;;(setq shr-color-visible-luminance-min 60)
+  ;;(setq shr-color-visible-distance-min 5)
   (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
   ;(add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.ch")
   ;(add-to-list 'mu4e-user-mail-address-list "raffael.affolter@protonmail.com")
@@ -598,14 +615,14 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.affolter@protonmail.ch")
+            :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
                     (mu4e-sent-folder . "/Protonmail/Sent")
                     (mu4e-drafts-folder . "/Protonmail/Drafts-local")
                     (mu4e-trash-folder . "/Protonmail/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
                     (smtpmail-local-domain . "127.0.0.1")
-                    (smtpmail-smtp-user . "raffael.affolter@protonmail.ch")
+                    (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 1025)))
 
@@ -615,14 +632,14 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "affolraf@students.zhaw.ch")
+            :vars '((user-mail-address . "afft@zhaw.ch")
                     (mu4e-sent-folder . "/ZHAW/Sent")
                     (mu4e-drafts-folder . "/ZHAW/Drafts")
                     (mu4e-trash-folder . "/ZHAW/Trash")
                     (smtpmail-default-smtp-server . "smtp.office365.com")
                     (smtpmail-smtp-server . "smtp.office365.com")
                     (smtpmail-local-domain . "office365.com")
-                    (smtpmail-smtp-user . "affolraf@students.zhaw.ch")
+                    (smtpmail-smtp-user . "afft@zhaw.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 587)))
           ,(make-mu4e-context
@@ -649,22 +666,31 @@ up :-)
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.affolter@uzh.ch")
+            :vars '((user-mail-address . "raffael.golomingi@uzh.ch")
                     (mu4e-sent-folder . "/UZH/Gesendet")
                     (mu4e-drafts-folder . "/UZH/Drafts")
                     (mu4e-trash-folder . "/UZH/Trash")
                     (smtpmail-default-smtp-server . "smtp.uzh.ch")
                     (smtpmail-smtp-server . "smtp.uzh.ch")
                     (smtpmail-local-domain . "uzh.ch")
-                    (smtpmail-smtp-user . "raffael.affolter@uzh.ch")
+                    (smtpmail-smtp-user . "raffael.golomingi@uzh.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 587)))))
 
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
-  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+;;  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
   (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
   (add-hook 'mu4e-compose-mode-hook (lambda() (ispell-change-dictionary "de_CH"))))
+
+(use-package mu4e-icalendar
+  :after (mu4e)
+  :config
+  (mu4e-icalendar-setup)
+  (setq gnus-icalendar-org-capture-file "~/Dokumente/org-documents/agenda.org")
+  (setq gnus-icalendar-org-capture-headline '("Termine"))
+  (gnus-icalendar-org-setup))
 #+END_SRC
+
 
 * flyspell
 we want flyspell to be enabled by default in text org and latex files
@@ -688,6 +714,27 @@ also easy swich between english and german
 
 (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
 #+END_SRC
+
+
+* Languagetool
+
+ #+begin_src emacs-lisp
+(use-package languagetool
+  :ensure t
+  :config
+  (setq languagetool-language-tool-jar
+        "~/.languagetool/languagetool-commandline.jar")
+  (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
+  (setq languagetool-mother-tongue t)
+  (setq languagetool-default-language "de-CH")
+  (global-set-key (kbd "C-c l c") 'languagetool-check)
+  (global-set-key (kbd "C-c l d") 'languagetool-clear-buffer)
+  (global-set-key (kbd "C-c l p") 'languagetool-correct-at-point)
+  (global-set-key (kbd "C-c l b") 'languagetool-correct-buffer)
+  (global-set-key (kbd "C-c l l") 'languagetool-set-language)
+  )
+ #+end_src
+
 
 * Markdown
 #+BEGIN_SRC emacs-lisp
@@ -741,20 +788,22 @@ Use 2 spaces instead of tab.
 intendation cannot insert tabs
 
 #+BEGIN_SRC emacs-lisp
-(setq-default inent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 
 Two spaces for programming languages
 
 #+BEGIN_SRC emacs-lisp
-(setq python-indent 2)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq python-indent-offset 4)))
 (setq js-indent-level 2)
 #+END_SRC
 
 auto indent with return key
 
 #+BEGIN_SRC emacs-lisp
-(define-key global-map (kbd "RET") 'newline-and-indent)
+;(define-key global-map (kbd "RET") 'newline-and-indent)
 #+END_SRC
 
 No trailing white spaces except in makrdowns
@@ -949,7 +998,10 @@ We want a good racket workspace
 we use ESS for R
 #+BEGIN_SRC emacs-lisp
 (use-package ess
-  :ensure t)
+  :ensure t
+  :init (require 'ess-site)
+  ;(load "ess-autoloads")
+  )
 #+END_SRC
 
 ** Jupyter support
@@ -1086,6 +1138,7 @@ I want to use minted to highlight my code.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-listings 'minted)
+(setq org-latex-prefer-user-labels t)
 #+END_SRC
 
 ** Plain lists
@@ -1138,7 +1191,7 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
   (let ((name (read-string "Name: ")))
     (expand-file-name (format "%s/%s-%s.org"
                               (format-time-string "%Y")
-                              (format-time-string "%Y-%m-%d")
+                             (format-time-string "%Y-%m-%d")
                               name) "~/git/cerealbuster.gitlab.io/org/posts/")))
 
 (setq org-capture-templates
@@ -1146,7 +1199,28 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
          "* TODO %?\n  %u\n  %a")
         ("b" "New blog entry" plain (file name-blog-file)
          (file "~/git/cerealbuster.gitlab.io/templates/blog-capture.org"))))
+
+;;("#" "used by gnus-icalendar-org" entry
+;; (file+olp+datetree  "~/Dokumente/org-documents/agenda.org")
+;; "%i" :immediate-finish t)
+
+
+;(defun my-catch-event-time (orig-fun &rest args)
+;  "Set org-overriding-default-time to the start time of the capture event"
+;  (let ((org-overriding-default-time (date-to-time
+;                                      (gnus-icalendar-event:start (car args)))))
+;    (apply orig-fun args)))
+
+;(advice-add 'gnus-icalendar:org-event-save :around #'my-catch-event-time)
 #+END_SRC
+
+#+RESULTS:
+
+** Citeproc
+   #+begin_src emacs-lisp
+(use-package citeproc
+  :ensure t)
+   #+end_src
 
 ** Org-Ref
 
@@ -1218,6 +1292,41 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
   (use-package org-mu4e)
 
 #+END_SRC
+
+** OrgMsg
+   #+begin_src emacs-lisp
+(use-package org-msg
+  :ensure t
+  :config
+  (setq mail-user-agent 'mu4e-user-agent)
+  (setq
+   org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+	 org-msg-startup "hidestars indent inlineimages"
+	 org-msg-greeting-fmt "\nHallo%s\n\n"
+	 org-msg-greeting-name-limit 3
+	 org-msg-default-alternatives '((new		. (text html))
+				                          (reply-to-html	. (text html))
+				                          (reply-to-text	. (text)))
+	 org-msg-convert-citation t
+	 org-msg-signature "
+Beste Grüsse
+Raffael
+
+,#+begin_signature
+--
+
+,#+include: \"~/.signature\"
+
+,#+end_signature")
+(org-msg-mode)
+(dolist (cur org-msg-enforce-css)
+  (when (and (assoc 'font-family (caddr cur))
+	     (not (string= (assoc-default 'font-family (caddr cur)) "monospace")))
+    (setf (alist-get 'font-family (caddr cur)) "\"IBM Plex Sans\"")
+    (when (assoc 'font-size (caddr cur))
+      (setf (alist-get 'font-size (caddr cur)) "12pt"))))
+)
+   #+end_src
 
 ** enable Markdown export
 
@@ -1328,7 +1437,8 @@ This languages shoud be loaded when creating code
    (R . t)
    (ein .t )
    (shell . t)
-   (gnuplot . t)))
+   (gnuplot . t)
+   (plantuml . t)))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
 #+END_SRC
@@ -1395,6 +1505,7 @@ I prefer that org uses emacs to visit pdfs
 #+end_src
 
 * Skeletons
+** Publication skeleton
 
 #+begin_src emacs-lisp
 
@@ -1446,4 +1557,34 @@ The buffer should be emtpy"
   "bibliography:"(car my-default-bibfile)"\n"
 
   )
+#+end_src
+
+** Blog skeleton
+#+begin_src emacs-lisp
+(define-skeleton new-blog-entry-skel
+  "Inserts a new blog skeleton into the current buffer"
+  nil
+  (org-export-insert-default-template 'default)
+  "#+options: html-link-use-abs-url:nil html-postamble:auto\n"
+  "#+options: html-preamble:t html-scripts:t html-style:t\n"
+  "#+options: html5-fancy:nil tex:t\n"
+  "#+html_doctype: html5\n"
+  "#+html_container: article\n"
+  "#+description:\n"
+  "#+keywords:\n"
+  "#+html_link_home: ../../index.html\n"
+  "#+html_link_up: ../../index.html\n"
+  "#+html_mathjax:\n"
+  "#+html_equation_reference_format: \eqref{%s}"
+  "#+html_head:\n"
+  "#+html_head_extra: <link rel=stylesheet type=text/css href=../../css/main.css />\n"
+  "#+infojs_opt:\n"
+  "#+creator: <a href=https://www.gnu.org/software/emacs/ >Emacs</a> 26.3 (<a href= https://orgmode.org>Org</a> mode 9.1.9)\n"
+  "\n"
+  "#+include: ../../../includes/disqus.html export html\n")
+
+(defun new-blog-entry ()
+  (interactive)
+  (find-file (name-blog-file))
+  (new-blog-entry-skel))
 #+end_src
