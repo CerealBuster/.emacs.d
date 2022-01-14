@@ -84,7 +84,8 @@ we want to auto update our packages
 (set-keyboard-coding-system  'utf-8)   ; pretty
 (set-selection-coding-system 'utf-8)   ; please
 (prefer-coding-system        'utf-8)   ; with sugar on top
-(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;;(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 #+END_SRC
 
 ** Garbage collection allow more than 20MB
@@ -286,6 +287,15 @@ modified buffers
   (kill-emacs))
 #+END_SRC
 
+* Emojify
+#+begin_src emacs-lisp
+(use-package emojify
+  :ensure t
+  ;;:hook (after-init . global-emojify-mode)
+  :config
+  (setq emojify-program-contexts nil))
+
+#+end_src
 
 * Evil
 
@@ -558,6 +568,8 @@ up :-)
   :ensure t
   :config
   (dashboard-setup-startup-hook)
+  (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
+  (add-to-list 'dashboard-items '(projects . 5) t)
   (if (daemonp)
       (setq initial-buffer-choice (lambda ()
                                     (get-buffer "*dashboard*")))))
@@ -1159,9 +1171,10 @@ For easier writing i will use literal links
 ** where is my agenda
 
 #+BEGIN_SRC emacs-lisp
-
-  (setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"))
-
+(setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"
+                         "~/Dokumente/ZHAW-Scansor-Projekt/scansor-project.org"
+                         "~/Dokumente/org-documents/irm-agenda.org"
+                         "~/Dokumente/org-documents/zhaw-agenda.org"))
 #+END_SRC
 
 ** Bibtex settings
@@ -1325,8 +1338,9 @@ Raffael
 	     (not (string= (assoc-default 'font-family (caddr cur)) "monospace")))
     (setf (alist-get 'font-family (caddr cur)) "\"IBM Plex Sans\"")
     (when (assoc 'font-size (caddr cur))
-      (setf (alist-get 'font-size (caddr cur)) "12pt"))))
-)
+      (setf (alist-get 'font-size (caddr cur)) "12pt"))
+    (when (assoc 'line-height (caddr cur))
+      (setf (alist-get 'line-height (caddr cur)) "1.5em")))))
    #+end_src
 
 ** enable Markdown export
@@ -1480,7 +1494,58 @@ I prefer that org uses emacs to visit pdfs
   :ensure t
   :diminish golden-ratio-mode
   :init (setq golden-ratio-auto-scale t)
-  :config (golden-ratio-mode 1))
+  :config
+  (golden-ratio-mode 1)
+  (dolist (f '(ace-window
+               ace-delete-window
+               ace-select-window
+               ace-swap-window
+               ace-maximize-window
+               avy-pop-mark
+               buf-move-left
+               buf-move-right
+               buf-move-up
+               buf-move-down
+               evil-avy-goto-word-or-subword-1
+               evil-avy-goto-line
+               evil-window-delete
+               evil-window-split
+               evil-window-vsplit
+               evil-window-left
+               evil-window-right
+               evil-window-up
+               evil-window-down
+               evil-window-bottom-right
+               evil-window-top-left
+               evil-window-mru
+               evil-window-next
+               evil-window-prev
+               evil-window-new
+               evil-window-vnew
+               evil-window-rotate-upwards
+               evil-window-rotate-downwards
+               evil-window-move-very-top
+               evil-window-move-far-left
+               evil-window-move-far-right
+               evil-window-move-very-bottom
+               next-multiframe-window
+               previous-multiframe-window
+               quit-window
+               winum-select-window-0-or-10
+               winum-select-window-1
+               winum-select-window-2
+               winum-select-window-3
+               winum-select-window-4
+               winum-select-window-5
+               winum-select-window-6
+               winum-select-window-7
+               winum-select-window-8
+               winum-select-window-9
+               windmove-left
+               windmove-right
+               windmove-up
+               windmove-down))
+    (add-to-list 'golden-ratio-extra-commands f)))
 #+END_SRC
 * Ledger Mode
   Lets try ledger mode
