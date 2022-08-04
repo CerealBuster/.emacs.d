@@ -595,8 +595,10 @@ up :-)
 (use-package mu4e
   :commands mu4e
   :config
-  (setq mu4e-maildir "~/Maildir")
-  (setq mu4e-get-mail-command "offlineimap")
+  ;;(setq mu4e-maildir "~/Maildir")
+ ;; (setq mu4e-get-mail-command "offlineimap")
+  (setq mu4e-maildir "~/Mail")
+  (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-update-interval 1200)
   (setq mu4e-attachement-dir "~/Downloads")
   (setq user-full-name "Raffael Golomingi")
@@ -629,7 +631,7 @@ up :-)
                             (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
             :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
                     (mu4e-sent-folder . "/Protonmail/Sent")
-                    (mu4e-drafts-folder . "/Protonmail/Drafts-local")
+                    (mu4e-drafts-folder . "/Protonmail/Drafts")
                     (mu4e-trash-folder . "/Protonmail/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
@@ -648,12 +650,12 @@ up :-)
                     (mu4e-sent-folder . "/ZHAW/Sent")
                     (mu4e-drafts-folder . "/ZHAW/Drafts")
                     (mu4e-trash-folder . "/ZHAW/Trash")
-                    (smtpmail-default-smtp-server . "smtp.office365.com")
-                    (smtpmail-smtp-server . "smtp.office365.com")
-                    (smtpmail-local-domain . "office365.com")
+                    (smtpmail-default-smtp-server . "127.0.0.1")
+                    (smtpmail-smtp-server . "127.0.0.1")
+                    (smtpmail-local-domain . "127.0.0.1")
                     (smtpmail-smtp-user . "afft@zhaw.ch")
-                    (smtpmail-stream-type . starttls)
-                    (smtpmail-smtp-service . 587)))
+                    (smtpmail-stream-type . plain)
+                    (smtpmail-smtp-service . 1026)))
           ,(make-mu4e-context
             :name "Outlook"
             :enter-func (lambda() (mu4e-message "Switch to Outlook"))
@@ -702,6 +704,9 @@ up :-)
   (setq gnus-icalendar-org-capture-headline '("Termine"))
   (gnus-icalendar-org-setup))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 
 * flyspell
