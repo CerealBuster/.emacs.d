@@ -1,69 +1,23 @@
-#+startup: overview
+#+startup: overview indent
 #+TITLE: Emacs configuration
 #+AUTHOR: Raffael Golomingi
 
+This is my emacs config file
+
 * diminish
 
-I don't want that every minor mode is cluttering my modeline
+I don't want that every minor mode is cluttering my modeline.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package diminish
   :ensure t)
-#+END_SRC
-
-* EXWM
-
-#+BEGIN_SRC emacs-lisp
-(use-package exwm
-  :ensure t
-  :defer t
-  :config
-  (require 'exwm-config)
-  (require 'exwm-systemtray)
-  (exwm-config-misc)
-  (setq exwm-workspace-number 4)
-  (exwm-systemtray-enable)
-  (setq exwm-systemtray-height 15)
-  (setq exwm-input-global-keys
-        `(
-          ;; Bind "s-r" to exit char-mode and fullscreen mode.
-          ([?\s-r] . exwm-reset)
-          ;; Bind "s-w" to switch workspace interactively.
-          ([?\s-w] . exwm-workspace-switch)
-          ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
-          ,@(mapcar (lambda (i)
-                      `(,(kbd (format "s-%d" i)) .
-                        (lambda ()
-                          (interactive)
-                          (exwm-workspace-switch-create ,i))))
-                    (number-sequence 0 9))
-          ;; Bind "s-&" to launch applications ('M-&' also works if the output
-          ;; buffer does not bother you).
-          ([?\s-&] . (lambda (command)
-                       (interactive (list (read-shell-command "$ ")))
-                       (start-process-shell-command command nil command)))
-          ;; Bind "s-<f2>" to "slock", a simple X display locker.
-          ([s-f2] . (lambda ()
-                      (interactive)
-                      (start-process "" nil "/usr/bin/slock")))
-          ([?\s-p] . helm-run-external-command)
-          ([?\s-:] . evil-ex))))
-#+END_SRC
-
-* desktop-environment
-
-#+BEGIN_SRC emacs-lisp
-(use-package desktop-environment
-  :ensure t
-  :diminish desktop-environment-mode
-  :config (desktop-environment-mode))
-#+END_SRC
+#+end_src
 
 * auto-package-update
 
-we want to auto update our packages
+I want to auto update packages. The default is every 7 days.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package auto-package-update
   :ensure t
   :config
@@ -71,13 +25,13 @@ we want to auto update our packages
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
-#+END_SRC
+#+end_src
 
 * Default settings
 
 ** UTF-8 Please
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (set-charset-priority 'unicode)
 (setq locale-coding-system   'utf-8)   ; pretty
 (set-terminal-coding-system  'utf-8)   ; pretty
@@ -86,152 +40,149 @@ we want to auto update our packages
 (prefer-coding-system        'utf-8)   ; with sugar on top
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 ;;(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-#+END_SRC
+#+end_src
 
 ** Garbage collection allow more than 20MB
 
-#+BEGIN_SRC emacs-lisp
+This should trigger gc not so often.
+#+begin_src emacs-lisp
 (setq gc-cons-threshold 20000000)
-#+END_SRC
+#+end_src
 
 ** No backup files
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq make-backup-files nil)
-#+END_SRC
+#+end_src
 
 ** Auto-Save in /tmp
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
-#+END_SRC
+#+end_src
 
 ** Always follow symlinks
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq vc-follow-symlinks t)
-#+END_SRC
+#+end_src
 
 ** Sentences have one space after a period
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq sentence-end-double-space nil)
-#+END_SRC
+#+end_src
 
 ** Confirm before closing Emacs
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq confirm-kill-emacs 'y-or-n-p)
-#+END_SRC
+#+end_src
 
 ** Ask y/n instead of yes/no
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
+#+end_src
 
 ** Auto revert files on change
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (global-auto-revert-mode t)
-#+END_SRC
+#+end_src
 
 
 ** Shortcut for changing font size
 
-#+BEGIN_SRC emacs-lisp
+Press Ctrl+1 for increasing the font and Ctrl+0 to decrease it.
+
+#+begin_src emacs-lisp
 (define-key global-map (kbd "C-1") 'text-scale-increase)
 (define-key global-map (kbd "C-0") 'text-scale-decrease)
-#+END_SRC
+#+end_src
 
 ** Disable startup message
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq inhibit-splash-screen t)
 (setq inhibit-startup-message t)
-#+END_SRC
+#+end_src
 
 ** No GUI toolbar
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (tool-bar-mode 0)
-#+END_SRC
+#+end_src
 
 ** Automatic line Breaks
 
-#+BEGIN_SRC emacs-lisp
+Per default I want line breaks when reaching column 80.
+
+#+begin_src emacs-lisp
 (setq-default fill-column 80)
 (add-hook 'text-mode-hook 'auto-fill-mode)
 (diminish 'auto-fill-function)
-#+END_SRC
+#+end_src
+
+** Ruler
+I like to have a ruler at the top of my windows.
+#+begin_src emacs-lisp
+(add-hook 'window-configuration-change-hook (lambda () (ruler-mode 1)))
+#+end_src
 
 ** Enable Narrow to region
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
-#+END_SRC
+#+end_src
 
 ** We dont need scroll bars
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (scroll-bar-mode -1)
-#+END_SRC
+#+end_src
 
 ** Remeber cursor position when reopening files
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq save-place-file "~/.emacs.d/saveplace")
 (setq-default save-place t)
-#+END_SRC
+#+end_src
 
 ** no bell
 
-#+BEGIN_SRC emacs-lisp
-
-  (setq visible-bell t)
-
-#+END_SRC
+#+begin_src emacs-lisp
+(setq visible-bell t)
+#+end_src
 
 ** auto completion
 
-#+BEGIN_SRC emacs-lisp
-
-  (use-package company
-    :ensure t
-    :defer t
-    :diminish company-mode
-    :init
-    (global-company-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-
-  ;(use-package company-quickhelp
-   ; :ensure t
-   ; :diminish company-quickhelp-mode
-   ; :config
-   ; (company-quickhelp-mode)
-  ;)
-#+END_SRC
-
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :defer t
+  :diminish company-mode
+  :init
+  (global-company-mode))
+#+end_src
 
 ** default font
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;;  (add-to-list 'default-frame-alist '(font . "Hack-11"))
 
 ;;  (when (member "Hack" (font-family-list))
 ;;    (set-face-attribute 'default nil :font "Hack" :height 110))
 
-  (add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
 
-  (when (member "IBM Plex Mono" (font-family-list))
-    (set-face-attribute 'default nil :font "IBM Plex Mono" :height 110))
-#+END_SRC
+(when (member "IBM Plex Mono" (font-family-list))
+  (set-face-attribute 'default nil :font "IBM Plex Mono" :height 110))
+#+end_src
 
 ** undo tree mode
 #+begin_src emacs-lisp
@@ -247,17 +198,15 @@ we want to auto update our packages
 Allows to ‘undo’ (and ‘redo’) changes in the window configuration with
 the key commands ‘C-c left’ and ‘C-c right’.
 
-#+BEGIN_SRC emacs-lisp
-
-  (when (fboundp 'winner-mode)
-    (winner-mode 1))
-
-#+END_SRC
+#+begin_src emacs-lisp
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+#+end_src
 
 ** Start in full screen
 
 I want that emacs opens in fullscreen
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
   ;;(custom-set-variables
    ;;'(initial-frame-alist (quote ((fullscreen . maximized)))))
@@ -267,26 +216,26 @@ I want that emacs opens in fullscreen
 ** Client settings
 
 Change how you kill buffers if you open emacs as client
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'server-switch-hook
           (lambda ()
             (when (current-local-map)
               (use-local-map (copy-keymap (current-local-map))))
             (when server-buffer-clients
               (local-set-key (kbd "C-x k") 'server-edit))))
-#+END_SRC
+#+end_src
 
 ** Emacs daemon settings
 This function helps to shut down the emacs server and save any
 modified buffers
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun server-shutdown ()
   "Save buffers, Quit, and Shutdown (kill) server"
   (interactive)
   (save-some-buffers)
   (kill-emacs))
-#+END_SRC
+#+end_src
 
 * Emojify
 #+begin_src emacs-lisp
@@ -300,7 +249,7 @@ modified buffers
 
 * Evil
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package evil
   :ensure t
   :init
@@ -340,7 +289,6 @@ modified buffers
 (use-package pdf-tools
   :ensure t
   :config
-;;  (evil-set-initial-state 'pdf-view-mode 'emacs)
   (add-hook 'pdf-view-mode-hook
             (lambda ()
               (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
@@ -349,41 +297,28 @@ modified buffers
   (pdf-tools-install))
 
 
-;;(setq TeX-view-program-selection '((output-pdf "pdf-tools"))
- ;;       TeX-view-program-list  '(("PDF Tools" TeX-pdf-tools-sync-view))
-  ;;      TeX-source-correlate-start-server t)
 
 (use-package evil-smartparens
   :ensure t
   :diminish evil-smartparens-mode
   :config
   (add-hook 'smartparens-enabled-hook #'evil-smartparens-mode))
-#+END_SRC
+#+end_src
 
 * Projectile
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package projectile
   :ensure t
   :defer t
   :diminish projectile-mode
   :config
   (projectile-global-mode))
-
-;(use-package projectile
-;  :ensure t
-  ;:defer t
-;  :diminish projectile-mode
-;  :init
-;  (projectile-mode +1)
-;  :bind (:map projectile-mode-map
-;              ("s-p" . projectile-command-map)
-;              ("C-c p" . projectile-command-map)))
-#+END_SRC
+#+end_src
 
 * Helm
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm
   :ensure t
   :diminish helm-mode
@@ -397,12 +332,12 @@ modified buffers
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (define-key helm-map (kbd "S-SPC") 'helm-toggle-visible-mark)
   (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
-#+END_SRC
+#+end_src
 
 
 ** Helm projectile
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-projectile
   :bind (("C-S-P" . helm-projectile-switch-project)
          :map evil-normal-state-map
@@ -412,87 +347,87 @@ modified buffers
   (evil-leader/set-key
     "ps" 'helm-projectile-ag
     "pa" 'helm-projectile-find-file-in-known-projects))
-#+END_SRC
+#+end_src
 
 * Which-key
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package which-key
   :ensure t
   :diminish which-key-mode
   :config (which-key-mode) )
-#+END_SRC
+#+end_src
 
 * Theming
 
 ** Theme to load
 *** solarized
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;  (use-package solarized-theme
 ;;    :ensure t
 ;;    :defer t
    ; :init (load-theme 'solarized-dark t)
 ;;    )
-#+END_SRC
+#+end_src
 
 *** zenburn
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;(use-package zenburn-theme
 ;;  :ensure t)
 
-#+END_SRC
+#+end_src
 
 *** material
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;  (use-package material-theme
 ;    :ensure t)
 
-#+END_SRC
+#+end_src
 
 
 *** tangotango
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;  (use-package tangotango-theme
 ;    :ensure t)
 
-#+END_SRC
+#+end_src
 
 *** darcula
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;;  (use-package darcula-theme
 ;;    :ensure t)
 
-#+END_SRC
+#+end_src
 
 *** ample
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;;(use-package ample-theme
 ;;  :defer t
 ;;  :ensure t)
-#+END_SRC
+#+end_src
 
 
 *** sanityinc-tomorrow
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;(use-package  color-theme-sanityinc-tomorrow
 ;;  :ensure t
 ;;  :defer t)
-#+END_SRC
+#+end_src
 *** gruvbox
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;(use-package gruvbox-theme
 ;  :ensure t)
-#+END_SRC
+#+end_src
 
 *** leuven
 #+begin_src emacs-lisp
@@ -501,27 +436,25 @@ modified buffers
 #+end_src
 
 *** load theme
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 ;;(use-package color-theme :ensure t)
 ;;(load-theme 'gruvbox-light-hard t)
 (load-theme 'leuven t)
 
 ;;(load-theme 'sanityinc-tomorrow-eighties t)
-#+END_SRC
+#+end_src
 ** Powerline
 
-#+BEGIN_SRC emacs-lisp
-
-  (use-package powerline
-    :ensure t
-    :config (powerline-default-theme ))
-
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package powerline
+  :ensure t
+  :config (powerline-default-theme ))
+#+end_src
 
 ** Airline Themes
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package airline-themes
   :ensure t
   :init
@@ -538,10 +471,8 @@ modified buffers
   ;;(load-theme 'airline-solarized-gui t)
   ;;(load-theme 'airline-wombat t)
   ;;(load-theme 'airline-gruvbox-dark t)
-  (load-theme 'airline-sol t)
-  )
-#+END_SRC
-
+  (load-theme 'airline-sol t))
+#+end_src
 
 
 ** Custom function for dark and light themes
@@ -551,7 +482,7 @@ made this little toggle function which loads the solarized/tango theme and
 then also loads the airline theme again so the modeline is not messed
 up :-)
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq light-theme 'leuven)
 (setq dark-theme 'leuven-dark)
 
@@ -568,11 +499,11 @@ up :-)
 ;;(toggle-light-theme)
 
 (global-set-key (kbd "<f6>") 'toggle-light-theme)
-#+END_SRC
+#+end_src
 
 * Dashboard
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dashboard
   :ensure t
   :config
@@ -582,11 +513,11 @@ up :-)
   (if (daemonp)
       (setq initial-buffer-choice (lambda ()
                                     (get-buffer "*dashboard*")))))
-#+END_SRC
+#+end_src
 
 * Plantuml
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package plantuml-mode
   :ensure t
   :config
@@ -594,11 +525,11 @@ up :-)
   (setq org-plantuml-jar-path (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
 
-#+END_SRC
+#+end_src
 
 * mu4e
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'smtpmail)
 
 ;(setq auth-sources '("~/.authinfo.gpg"))
@@ -715,22 +646,22 @@ up :-)
   (setq gnus-icalendar-org-capture-file "~/Dokumente/org-documents/agenda.org")
   (setq gnus-icalendar-org-capture-headline '("Termine"))
   (gnus-icalendar-org-setup))
-#+END_SRC
+#+end_src
 
 
 * flyspell
 we want flyspell to be enabled by default in text org and latex files
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq ispell-list-command "--list")
 (setq ispell-dictionary "de_CH")
 (add-hook 'text-mode-hook 'flyspell-mode)
 (diminish 'flyspell-mode)
-#+END_SRC
+#+end_src
 
 also easy swich between english and german
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun fd-switch-dictionary()
   (interactive)
   (let* ((dic ispell-current-dictionary)
@@ -739,37 +670,13 @@ also easy swich between english and german
     (message "Dictionary switched from %s to %s" dic change)))
 
 (global-set-key (kbd "<f8>")   'fd-switch-dictionary)
-#+END_SRC
-
+#+end_src
 
 * Languagetool
 
  #+begin_src emacs-lisp
-;(use-package languagetool
-;  :ensure t
-;  :config
-;  (setq languagetool-language-tool-jar
-;        "~/.languagetool/languagetool-commandline.jar")
-;  (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8"))
-;  (setq languagetool-mother-tongue t)
-;  (setq languagetool-default-language "de-CH")
-;  (global-set-key (kbd "C-c l c") 'languagetool-check)
-;  (global-set-key (kbd "C-c l d") 'languagetool-clear-buffer)
-;  (global-set-key (kbd "C-c l p") 'languagetool-correct-at-point)
-;  (global-set-key (kbd "C-c l b") 'languagetool-correct-buffer)
-;  (global-set-key (kbd "C-c l l") 'languagetool-set-language)
-;  )
-
 (use-package languagetool
   :ensure t
-;  :commands (languagetool-check
-;             languagetool-clear-suggestions
-;             languagetool-correct-at-point
-;             languagetool-correct-buffer
-;             languagetool-set-language
-;             languagetool-server-mode
-;             languagetool-server-start
-;             languagetool-server-stop)
   :config
   (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8")
         languagetool-console-command "~/.languagetool/languagetool-commandline.jar"
@@ -785,126 +692,126 @@ also easy swich between english and german
 
 
 * Markdown
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package markdown-mode
   :ensure t
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "pandoc"))
-#+END_SRC
-#+BEGIN_SRC emacs-lisp
+#+end_src
+
+#+begin_src emacs-lisp
 (use-package markdown-preview-mode
   :ensure t)
-#+END_SRC
+#+end_src
 
 * Px
-#+BEGIN_SRC emacs-lisp
+
+Px lets you preview LaTeX snippets.
+
+#+begin_src emacs-lisp
 (use-package px
   :ensure t)
-#+END_SRC
+#+end_src
 * Latex
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package auctex
   :defer t
   :ensure t)
-
-#+END_SRC
+#+end_src
 
 * Programming settings
 ** Defaults
 
 Line numbers
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (global-display-line-numbers-mode)
-#+END_SRC
+#+end_src
 
 Tabs
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default tab-width 2)
-#+END_SRC
+#+end_src
 
 Use 2 spaces instead of tab.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default tab-width 2 indent-tabs-mode nil)
-#+END_SRC
+#+end_src
 
 intendation cannot insert tabs
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
-#+END_SRC
+#+end_src
 
 Two spaces for programming languages
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'python-mode-hook
           (lambda ()
             (setq python-indent-offset 4)))
 (setq js-indent-level 2)
-#+END_SRC
-
-auto indent with return key
-
-#+BEGIN_SRC emacs-lisp
-;(define-key global-map (kbd "RET") 'newline-and-indent)
-#+END_SRC
+#+end_src
 
 No trailing white spaces except in makrdowns
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'before-save-hook
           '(lambda()
              (when (not (derived-mode-p 'markdown-mode))
                (delete-trailing-whitespace))))
 
-#+END_SRC
+#+end_src
 
 highlight fixme todo and bug statement
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;(use-package fixme-mode
 ;;  :ensure t
 ;;  :config (fixme-mode nil))
-#+END_SRC
+#+end_src
 
-highlight all characters which are over the column 80
+highlight all characters which are over the column 100 and show a visual line
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'whitespace)
 (setq whitespace-line-column 100)
 (setq whitespace-style '(face lines-tail))
 
 (add-hook 'prog-mode-hook 'whitespace-mode)
+(add-hook 'prog-mode-hook (lambda () (set-fill-column 100)))
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 (diminish 'whitespace-mode)
-#+END_SRC
+#+end_src
 
 Use python3 as default
-#+BEGIN_SRC  emacs-lisp
+#+begin_src  emacs-lisp
 (setq python-shell-interpreter "python3")
-#+END_SRC
+#+end_src
 
 diminish eldoc-mode
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (diminish 'eldoc-mode)
-#+END_SRC
+#+end_src
 
 ** realgud
+Realgud is a frontend for external debuggers.
 
-#+BEGIN_SRC  emacs-lisp
+#+begin_src  emacs-lisp
 (use-package realgud
   :ensure t
   :defer t)
-#+END_SRC
+#+end_src
 
 ** Paredit
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;(use-package paredit
 ;;  :ensure t
 ;;  :diminish paredit-mode
@@ -925,151 +832,143 @@ diminish eldoc-mode
 ;;)
 ;;)
 
-#+END_SRC
+#+end_src
 
 ** Smartparens
-#+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :ensure t
-    :diminish smartparens-mode
-    :hook ((lisp-mode
-            emacs-lisp-mode
-            json-mode
-            scheme-mode
-            geiser-repl-mode
-            slime-repl-mode
-            hy-mode
-            clojure-mode
-            cider-repl-mode
-            haskell-mode
-            haskell-interactive-mode
-            ess-mode
-            ein:ipynb-mode
-            python-mode) . smartparens-strict-mode)
-    :config
-    (require 'smartparens-config)
-    (sp-use-smartparens-bindings))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package smartparens
+  :ensure t
+  :diminish smartparens-mode
+  :hook ((lisp-mode
+          emacs-lisp-mode
+          json-mode
+          scheme-mode
+          geiser-repl-mode
+          slime-repl-mode
+          hy-mode
+          clojure-mode
+          cider-repl-mode
+          haskell-mode
+          haskell-interactive-mode
+          ess-mode
+          ein:ipynb-mode
+          python-mode) . smartparens-strict-mode)
+  :config
+  (require 'smartparens-config)
+  (sp-use-smartparens-bindings))
+#+end_src
 
 ** LISP settings
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 
-#+END_SRC
+#+end_src
 
 ** Clojure
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package clojure-mode
   :ensure t)
 
 (use-package clojure-mode-extra-font-locking
   :ensure t)
-#+END_SRC
+#+end_src
 
 ** Cider
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package cider
   :ensure t
   :diminish cider-mode)
-
-;;(use-package cider
-;;  :ensure t
-;;  :diminish cider-mode
-;;  :config
-;;  (add-hook 'cider-mode-hook #'eldoc-mode)
-;;  )
 
 (setq cider-cljs-lein-repl
       "(do (require 'figwheel-sidecar.repl-api)
            (figwheel-sidecar.repl-api/start-figwheel!)
            (figwheel-sidecar.repl-api/cljs-repl))")
-#+END_SRC
+#+end_src
 
 ** SLIME
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package slime
   :ensure t
   :config (progn (setq inferior-lisp-program "/usr/bin/clisp")
                  (setq slime-contribs '(slime-fancy))))
 
-#+END_SRC
+#+end_src
 
 ** Geiser
 
 We want a good racket workspace
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package geiser
   :ensure t
   :config
   (setq geiser-active-implementations '(racket)))
-#+END_SRC
+#+end_src
 
 ** Hy
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package hy-mode
   :ensure t)
-#+END_SRC
+#+end_src
 ** Magit
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package magit
   :ensure t
   :config (global-set-key (kbd "C-x g") 'magit-status))
 
-#+END_SRC
+#+end_src
 
 ** flycheck
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flycheck
   :ensure t
   :diminish flycheck-mode
   :init (global-flycheck-mode))
-#+END_SRC
+#+end_src
 
 
 ** Rainboooows
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package rainbow-delimiters
   :ensure t
   :init
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-#+END_SRC
+#+end_src
 
 ** Yaml
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yaml-mode
   :ensure t)
-
-#+END_SRC
+#+end_src
 
 ** ESS
 we use ESS for R
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ess
   :ensure t
   :init (require 'ess-site)
   ;(load "ess-autoloads")
   )
-#+END_SRC
+#+end_src
 
 ** Jupyter support
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ein
   :ensure t
   :defer t)
-#+END_SRC
+#+end_src
 
 ** Haskell
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package haskell-mode
   :ensure t
   :config
@@ -1085,38 +984,30 @@ we use ESS for R
   (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
   (define-key haskell-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
   (define-key haskell-mode-map (kbd "C-c c") 'haskell-process-cabal))
-#+END_SRC
+#+end_src
 
 
 ** Gnuplot
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package gnuplot
   :ensure t)
-#+END_SRC
+#+end_src
 
 * Org-Mode Settings
 ** org easy templates
-This section maybe gets removed but i lost the org easy templates
+This section maybe gets removed but I lost the org easy templates
 
 #+begin_src emacs-lisp
 (require 'org-tempo)
 #+end_src
 
 ** configure latex compiler
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;  (setq org-latex-compiler "xelatex")
-#+END_SRC
+#+end_src
 
 ** configure pdflatex
-#+BEGIN_SRC emacs-lisp
-;;  (setq org-latex-pdf-process
-;;       '("xelatex -interaction nonstopmode %f"
-;;         "bibtex %b"
-;;         "xelatex -interaction nonstopmode %f"
-;;         "xelatex -interaction nonstopmode %f"
-;;         "xelatex -interaction nonstopmode %f"
-;;))
-
+#+begin_src emacs-lisp
 (setq org-latex-pdf-process
       '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "bib2gls --group %b"
@@ -1124,20 +1015,22 @@ This section maybe gets removed but i lost the org easy templates
         "bibtex %b"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
         "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-#+END_SRC
+#+end_src
 
-** Enable native intendations in sourc blocks
+** Org-src settings
+Enable native intendations in sourc blocks and lets open the org-src-edit b
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-src-tab-acts-natively t)
 (setq org-src-preserve-indentation t)
 (setq org-fontify-whole-heading-line t)
-#+END_SRC
+(setq org-src-window-setup 'split-window-right)
+#+end_src
 
 ** KOMA-SCRIPT
 we want koma script
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
   (with-eval-after-load "ox-latex"
     (add-to-list 'org-latex-classes
@@ -1162,17 +1055,15 @@ we want koma script
                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
-#+END_SRC
+#+end_src
 
 ** eurpecv-class
 
-#+BEGIN_SRC emacs-lisp
-
-  (with-eval-after-load "ox-latex"
-    (add-to-list 'org-latex-classes
-                 '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
-
-#+END_SRC
+#+begin_src emacs-lisp
+(with-eval-after-load "ox-latex"
+  (add-to-list 'org-latex-classes
+               '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
+#+end_src
 
 ** ACMART
 
@@ -1191,19 +1082,17 @@ we want koma script
 
 I want to use minted to highlight my code.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-listings 'minted)
 (setq org-latex-prefer-user-labels t)
-#+END_SRC
+#+end_src
 
 ** Plain lists
 
-#+BEGIN_SRC emacs-lisp
-
-  (setq org-list-allow-alphabetical t)
-
-#+END_SRC
+#+begin_src emacs-lisp
+(setq org-list-allow-alphabetical t)
+#+end_src
 
 ** Hyperlink display
 For easier writing i will use literal links
@@ -1213,25 +1102,25 @@ For easier writing i will use literal links
 
 ** where is my agenda
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"
                          "~/Dokumente/ZHAW-Scansor-Projekt/scansor-project.org"
                          "~/Dokumente/org-documents/irm-agenda.org"
                          "~/Dokumente/org-documents/zhaw-agenda.org"))
-#+END_SRC
+#+end_src
 
 ** Bibtex settings
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq my-bibtex-dir "~/bibliography/"
       my-bibtex-pdf-dir (concat my-bibtex-dir "bibtex-pdfs/")
       my-default-bibfile (list  (concat my-bibtex-dir "default-bibliography.bib"))
       my-default-bibnotes my-bibtex-dir)
-#+END_SRC
+#+end_src
 
 Definitions for automatically generating a bibtex key from a bibtex
 entry. Look at help:bibtex-generate-autokey to understand the settings
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq bibtex-autokey-year-length 4
       bibtex-autokey-name-year-separator "-"
       bibtex-autokey-year-title-separator "-"
@@ -1239,10 +1128,10 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
       bibtex-autokey-titlewords 2
       bibtex-autokey-titlewords-stretch 1
       bibtex-autokey-titleword-length 5)
-#+END_SRC
+#+end_src
 
 ** org capture templates
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun name-blog-file ()
   (interactive)
   (let ((name (read-string "Name: ")))
@@ -1269,9 +1158,8 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 ;    (apply orig-fun args)))
 
 ;(advice-add 'gnus-icalendar:org-event-save :around #'my-catch-event-time)
-#+END_SRC
+#+end_src
 
-#+RESULTS:
 
 ** Citeproc
    #+begin_src emacs-lisp
@@ -1281,7 +1169,7 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 
 ** Org-Ref
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-ref
   :ensure t
   ;;:commands org-ref-bibtex-hydra/body
@@ -1297,19 +1185,19 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
             (bibtex-completion-edit-notes
              (list
               (car (org-ref-get-bibtex-key-and-file thekey))))))))
-#+END_SRC
+#+end_src
 
 ** Org-noter
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-noter
   :ensure t
   :config
   (setq org-noter-notes-search-path (list my-default-bibnotes))
   :bind ("C-c i" . 'org-noter-insert-note))
-#+END_SRC
+#+end_src
 
 ** helm bibtex
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-bibtex
   :ensure t
   :commands helm-bibtex
@@ -1325,17 +1213,17 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
          "#+TITLE: Notes on ${=key=}: ${title}\n#+INTERLEAVE_PDF: %s${=key=}.pdf\n\n"
          my-bibtex-pdf-dir)       ;; header to be used in the associated notes files
         bibtex-completion-additional-search-fields '(keywords)))
-#+END_SRC
+#+end_src
 
 ** Org bullets makes things look pretty
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (setenv "BROWSER" "chromium-browser")
   (use-package org-bullets
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
+#+end_src
 ** Subfigures
    #+begin_src emacs-lisp
 (use-package ox-latex-subfigure
@@ -1344,11 +1232,9 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 
 ** Org mu4e
 
-#+BEGIN_SRC emacs-lisp
-
-  (use-package org-mu4e)
-
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package org-mu4e)
+#+end_src
 
 ** OrgMsg
    #+begin_src emacs-lisp
@@ -1388,31 +1274,29 @@ Raffael
 
 ** enable Markdown export
 
-#+BEGIN_SRC emacs-lisp
-
-  (with-eval-after-load 'org
-    (require 'ox-md nil t))
-
-#+END_SRC
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (require 'ox-md nil t))
+#+end_src
 
 ** Org-Journal
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org-journal
-    :defer t
-    :ensure t
-    :init
-    (setq org-journal-dir "~/Dokumente/org-documents/journals")
-    (setq org-journal-file-format "%d-%m-%Y.org"))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package org-journal
+  :defer t
+  :ensure t
+  :init
+  (setq org-journal-dir "~/Dokumente/org-documents/journals")
+  (setq org-journal-file-format "%d-%m-%Y.org"))
+#+end_src
 
 ** Org-Projects
 here are my project settings
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;(add-to-list 'org-export-options-alist '(:page-type "PAGE_TYPE" "default" nil parse))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun my/sitemap-fn (title list)
   "Generate the sitemap (Blog Main Page)"
   (concat "#+TITLE: " title "\n\n"
@@ -1474,17 +1358,17 @@ here are my project settings
            :recursive t
            :publishing-function org-publish-attachment)
           ("org" :components ("blog-posts" "static-sites" "org-static"))))
-#+END_SRC
+#+end_src
 
 ** ob-hy
-#+BEGIN_SRC emacs-lisp
-  (use-package ob-hy
-    :ensure t)
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package ob-hy
+  :ensure t)
+#+end_src
 
 ** org-babel
 This languages shoud be loaded when creating code
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((python . t)
@@ -1499,27 +1383,27 @@ This languages shoud be loaded when creating code
    (plantuml . t)))
 (setq org-babel-clojure-backend 'cider)
 (setq org-babel-python-command "python3")
-#+END_SRC
+#+end_src
 
 ** org-babel-eval-in-repl
 
 Sometimes its nice to just evaluate the codeblock in the repl
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-babel-eval-in-repl
   :ensure t
   :after ob
   :config
   (define-key org-mode-map (kbd "C-<return>") 'ober-eval-in-repl)
   (define-key org-mode-map (kbd "M-S-<return>") 'ober-eval-block-in-repl))
-#+END_SRC
+#+end_src
 
 ** hooks for orgmode
 Update dynamic blocks before saving
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'before-save-hook 'org-update-all-dblocks)
-#+END_SRC
+#+end_src
 
 ** org export settings
 I prefer that org uses emacs to visit pdfs
@@ -1532,7 +1416,7 @@ I prefer that org uses emacs to visit pdfs
 
 * Golden Ratio
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package golden-ratio
   :ensure t
   :diminish golden-ratio-mode
@@ -1589,13 +1473,13 @@ I prefer that org uses emacs to visit pdfs
                windmove-up
                windmove-down))
     (add-to-list 'golden-ratio-extra-commands f)))
-#+END_SRC
+#+end_src
 * Ledger Mode
   Lets try ledger mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ledger-mode
   :ensure t)
-#+END_SRC
+#+end_src
 
 * Writegood Mode
 
@@ -1608,6 +1492,8 @@ I prefer that org uses emacs to visit pdfs
   (global-set-key (kbd "C-c C-g e") 'writegood-reading-ease))
 #+end_src
 * Centered window mode
+
+This centers the text on the window.
 #+begin_src emacs-lisp
 (use-package centered-window
   :ensure t)
@@ -1696,4 +1582,53 @@ The buffer should be emtpy"
   (interactive)
   (find-file (name-blog-file))
   (new-blog-entry-skel))
+#+end_src
+
+
+* EXWM
+
+#+begin_src emacs-lisp :exports none
+(use-package exwm
+  :ensure t
+  :defer t
+  :config
+  (require 'exwm-config)
+  (require 'exwm-systemtray)
+  (exwm-config-misc)
+  (setq exwm-workspace-number 4)
+  (exwm-systemtray-enable)
+  (setq exwm-systemtray-height 15)
+  (setq exwm-input-global-keys
+        `(
+          ;; Bind "s-r" to exit char-mode and fullscreen mode.
+          ([?\s-r] . exwm-reset)
+          ;; Bind "s-w" to switch workspace interactively.
+          ([?\s-w] . exwm-workspace-switch)
+          ;; Bind "s-0" to "s-9" to switch to a workspace by its index.
+          ,@(mapcar (lambda (i)
+                      `(,(kbd (format "s-%d" i)) .
+                        (lambda ()
+                          (interactive)
+                          (exwm-workspace-switch-create ,i))))
+                    (number-sequence 0 9))
+          ;; Bind "s-&" to launch applications ('M-&' also works if the output
+          ;; buffer does not bother you).
+          ([?\s-&] . (lambda (command)
+                       (interactive (list (read-shell-command "$ ")))
+                       (start-process-shell-command command nil command)))
+          ;; Bind "s-<f2>" to "slock", a simple X display locker.
+          ([s-f2] . (lambda ()
+                      (interactive)
+                      (start-process "" nil "/usr/bin/slock")))
+          ([?\s-p] . helm-run-external-command)
+          ([?\s-:] . evil-ex))))
+#+end_src
+
+* desktop-environment
+
+#+begin_src emacs-lisp :exports none
+(use-package desktop-environment
+  :ensure t
+  :diminish desktop-environment-mode
+  :config (desktop-environment-mode))
 #+end_src
