@@ -531,16 +531,16 @@ up :-)
 
 #+begin_src emacs-lisp
 (require 'smtpmail)
-
-;(setq auth-sources '("~/.authinfo.gpg"))
+(add-to-list 'load-path "/home/raffael/.guix-profile/share/emacs/site-lisp/mu4e")
+(setq auth-sources '("~/.authinfo.gpg"))
 
 (use-package mu4e
   :commands mu4e
   :config
-  ;;(setq mu4e-maildir "~/Maildir")
- ;; (setq mu4e-get-mail-command "offlineimap")
-  (setq mu4e-maildir "~/Mail")
-  (setq mu4e-get-mail-command "mbsync -a")
+  (setq mu4e-maildir "~/Maildir")
+ (setq mu4e-get-mail-command "offlineimap")
+  ;;(setq mu4e-maildir "~/Mail")
+  ;;(setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-update-interval 1200)
   (setq mu4e-attachement-dir "~/Downloads")
   (setq user-full-name "Raffael Golomingi")
@@ -582,21 +582,38 @@ up :-)
                     (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
                     (smtpmail-stream-type . starttls)
                     (smtpmail-smtp-service . 1025)))
-
-          ,(make-mu4e-context
-            :name "ZHAW"
-            :enter-func (lambda() (mu4e-message "Switch to ZHAW"))
+,(make-mu4e-context
+            :name "PROTONMAIL"
+            :enter-func (lambda() (mu4e-message "Switch to Protonmail"))
             :match-func (lambda(msg)
                           (when msg
-                            (s-prefix? "/ZHAW/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "afft@zhaw.ch")
-                    (mu4e-sent-folder . "/ZHAW/Sent")
-                    (mu4e-drafts-folder . "/ZHAW/Drafts")
-                    (mu4e-trash-folder . "/ZHAW/Trash")
+                            (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
+                    (mu4e-sent-folder . "/Protonmail/Sent")
+                    (mu4e-drafts-folder . "/Protonmail/Drafts")
+                    (mu4e-trash-folder . "/Protonmail/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
                     (smtpmail-local-domain . "127.0.0.1")
-                    (smtpmail-smtp-user . "afft@zhaw.ch")
+                    (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
+                    (smtpmail-stream-type . starttls)
+                    (smtpmail-smtp-service . 1025)))
+
+
+          ,(make-mu4e-context
+            :name "USZ"
+            :enter-func (lambda() (mu4e-message "Switch to USZ"))
+            :match-func (lambda(msg)
+                          (when msg
+                            (s-prefix? "/USZ/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael.golomingi@usz.ch")
+                    (mu4e-sent-folder . "/USZ/Sent")
+                    (mu4e-drafts-folder . "/USZ/Drafts")
+                    (mu4e-trash-folder . "/USZ/Trash")
+                    (smtpmail-default-smtp-server . "127.0.0.1")
+                    (smtpmail-smtp-server . "127.0.0.1")
+                    (smtpmail-local-domain . "127.0.0.1")
+                    (smtpmail-smtp-user . "raffael.golomingi@usz.ch")
                     (smtpmail-stream-type . plain)
                     (smtpmail-smtp-service . 1026)))
           ,(make-mu4e-context
@@ -618,21 +635,26 @@ up :-)
                     (mu4e-sent-messages-behavior . delete)
                     (mu4e-sent-messages-behavior . delete)))
           ,(make-mu4e-context
-            :name "UZH"
+            :name "irm-uzh"
             :enter-func (lambda() (mu4e-message "Switch to UZH"))
             :match-func (lambda(msg)
                           (when msg
                             (s-prefix? "/UZH/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.golomingi@uzh.ch")
+            :vars '((user-mail-address . "raffael.golomingi@irm.uzh.ch")
                     (mu4e-sent-folder . "/UZH/Gesendet")
                     (mu4e-drafts-folder . "/UZH/Drafts")
                     (mu4e-trash-folder . "/UZH/Trash")
-                    (smtpmail-default-smtp-server . "smtp.uzh.ch")
-                    (smtpmail-smtp-server . "smtp.uzh.ch")
-                    (smtpmail-local-domain . "uzh.ch")
-                    (smtpmail-smtp-user . "raffael.golomingi@uzh.ch")
-                    (smtpmail-stream-type . starttls)
-                    (smtpmail-smtp-service . 587)))))
+                    (smtpmail-default-smtp-server . "127.0.0.1")
+                    (smtpmail-smtp-server . "127.0.0.1")
+                    (smtpmail-local-domain . "127.0.0.1")
+                    (smtpmail-smtp-user . "afra")
+                    (smtpmail-stream-type . plain)
+                    (smtpmail-smtp-service . 1027)
+                    (org-msg-signature . "Beste Grüsse
+,#+begin_signature
+--
+,#+include: \"~/.signature-uzh\"
+,#+end_signature")))))
 
   (add-hook 'message-mode-hook 'turn-on-orgtbl)
 ;;  (add-hook 'message-mode-hook 'turn-on-orgstruct++)
@@ -649,7 +671,6 @@ up :-)
 #+end_src
 
 #+RESULTS:
-: t
 
 
 * flyspell
