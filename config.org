@@ -27,6 +27,13 @@ I want to auto update packages. The default is every 7 days.
 
 #+end_src
 
+* Guix
+
+I will use more and more Guix as my way to get packages wo we can do this
+#+begin_src emacs-lisp
+(let ((default-directory  "~/.guix-profile/share/emacs/site-lisp/"))
+  (normal-top-level-add-subdirs-to-load-path))
+#+end_src
 * Default settings
 
 ** UTF-8 Please
@@ -162,11 +169,12 @@ I like to have a ruler at the top of my windows.
 
 #+begin_src emacs-lisp
 (use-package company
-  :ensure t
-  :defer t
+;;  :ensure t
+;;  :load-path "~/.guix-profile/share/emacs/site-lisp/company-0.10.2"
+;;  :defer t
   :diminish company-mode
   :init
-  (global-company-mode))
+  (add-hook 'after-init-hook 'global-company-mode))
 #+end_src
 
 ** default font
@@ -178,11 +186,19 @@ I like to have a ruler at the top of my windows.
 ;;  (when (member "Hack" (font-family-list))
 ;;    (set-face-attribute 'default nil :font "Hack" :height 110))
 
-(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+;;(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+;;(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11"))
+;;(add-to-list 'default-frame-alist '(font . "Source Code  Pro-12"))
 
-(when (member "IBM Plex Mono" (font-family-list))
-  (set-face-attribute 'default nil :font "IBM Plex Mono" :height 110))
+
+;(when (member "IBM Plex Mono" (font-family-list))
+;  (set-face-attribute 'default nil :font "IBM Plex Mono"
+;                      :foundry "IBM"
+;                      :height 121
+;                      ))
 #+end_src
+
+
 
 ** undo tree mode
 #+begin_src emacs-lisp
@@ -237,6 +253,18 @@ modified buffers
   (kill-emacs))
 #+end_src
 
+** GPG Settings
+This needs to be done so I can enter passwords in the minibuffer
+#+begin_src emacs-lisp
+(setq epg-pinentry-mode 'ask)
+#+end_src
+* Unicode fonts
+#+begin_src emacs-lisp
+(use-package unicode-fonts
+  :ensure t
+  :init
+  (unicode-fonts-setup))
+#+end_src
 * Emojify
 #+begin_src emacs-lisp
 (use-package emojify
@@ -291,9 +319,10 @@ modified buffers
   :config
   (add-hook 'pdf-view-mode-hook
             (lambda ()
-              (set (make-local-variable 'evil-emacs-state-cursor) (list nil))))
+              (set (make-local-variable 'evil-emacs-state-cursor) (list nil))
+              (display-line-numbers-mode -1)))
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
-  (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))
+ ;; (add-hook 'pdf-view-mode-hook (lambda () (linum-mode -1)))
   (pdf-tools-install))
 
 
@@ -523,8 +552,8 @@ up :-)
   :config
   (setq plantuml-default-exec-mode 'jar)
   (setq org-plantuml-jar-path (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
+  (setq plantuml-jar-path (expand-file-name "/usr/share/java/plantuml/plantuml.jar"))
   (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode)))
-
 #+end_src
 
 * mu4e
@@ -571,33 +600,24 @@ up :-)
             :enter-func (lambda() (mu4e-message "Switch to Protonmail"))
             :match-func (lambda(msg)
                           (when msg
-                            (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
-                    (mu4e-sent-folder . "/Protonmail/Sent")
-                    (mu4e-drafts-folder . "/Protonmail/Drafts")
-                    (mu4e-trash-folder . "/Protonmail/Trash")
+                            (s-prefix? "/PROTONMAIL/" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address . "raffael@golomingi.ch")
+                    (mu4e-sent-folder . "/PROTONMAIL/Sent")
+                    (mu4e-drafts-folder . "/PROTONMAIL/Drafts")
+                    (mu4e-trash-folder . "/PROTONMAIL/Trash")
                     (smtpmail-default-smtp-server . "127.0.0.1")
                     (smtpmail-smtp-server . "127.0.0.1")
                     (smtpmail-local-domain . "127.0.0.1")
-                    (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
+                    (smtpmail-smtp-user . "raffael@golomingi.ch")
                     (smtpmail-stream-type . starttls)
-                    (smtpmail-smtp-service . 1025)))
-,(make-mu4e-context
-            :name "PROTONMAIL"
-            :enter-func (lambda() (mu4e-message "Switch to Protonmail"))
-            :match-func (lambda(msg)
-                          (when msg
-                            (s-prefix? "/Protonmail/" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "raffael.golomingi@protonmail.ch")
-                    (mu4e-sent-folder . "/Protonmail/Sent")
-                    (mu4e-drafts-folder . "/Protonmail/Drafts")
-                    (mu4e-trash-folder . "/Protonmail/Trash")
-                    (smtpmail-default-smtp-server . "127.0.0.1")
-                    (smtpmail-smtp-server . "127.0.0.1")
-                    (smtpmail-local-domain . "127.0.0.1")
-                    (smtpmail-smtp-user . "raffael.golomingi@protonmail.ch")
-                    (smtpmail-stream-type . starttls)
-                    (smtpmail-smtp-service . 1025)))
+                    (smtpmail-smtp-service . 1025)
+                    (org-msg-signature . "Beste Grüsse
+Raffael
+
+,#+begin_signature
+--
+,#+include: \"~/.signature\"
+,#+end_signature")))
 
 
           ,(make-mu4e-context
@@ -615,7 +635,14 @@ up :-)
                     (smtpmail-local-domain . "127.0.0.1")
                     (smtpmail-smtp-user . "raffael.golomingi@usz.ch")
                     (smtpmail-stream-type . plain)
-                    (smtpmail-smtp-service . 1026)))
+                    (smtpmail-smtp-service . 1026)
+                    (org-msg-signature . "Beste Grüsse
+Raffael
+
+,#+begin_signature
+--
+,#+include: \"~/.signature-usz\"
+,#+end_signature")))
           ,(make-mu4e-context
             :name "Outlook"
             :enter-func (lambda() (mu4e-message "Switch to Outlook"))
@@ -651,6 +678,8 @@ up :-)
                     (smtpmail-stream-type . plain)
                     (smtpmail-smtp-service . 1027)
                     (org-msg-signature . "Beste Grüsse
+Raffael
+
 ,#+begin_signature
 --
 ,#+include: \"~/.signature-uzh\"
@@ -671,7 +700,18 @@ up :-)
 #+end_src
 
 #+RESULTS:
+: t
 
+
+* Wanderlust?
+#+begin_src emacs-lisp
+;(use-package wanderlust
+;  :init
+;(autoload 'wl "wl" "Wanderlust" t)
+;(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+;(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+;  )
+#+end_src
 
 * flyspell
 we want flyspell to be enabled by default in text org and latex files
@@ -869,6 +909,7 @@ Realgud is a frontend for external debuggers.
           scheme-mode
           geiser-repl-mode
           slime-repl-mode
+          sly-repl-mode
           hy-mode
           clojure-mode
           cider-repl-mode
@@ -903,7 +944,8 @@ Realgud is a frontend for external debuggers.
 
 #+begin_src emacs-lisp
 (use-package cider
-  :ensure t
+  ;;:load-path "~/.guix-profile/share/emacs/site-lisp/cider-1.9.0"
+;;  :ensure t
   :diminish cider-mode)
 
 (setq cider-cljs-lein-repl
@@ -915,11 +957,48 @@ Realgud is a frontend for external debuggers.
 ** SLIME
 
 #+begin_src emacs-lisp
-(use-package slime
-  :ensure t
-  :config (progn (setq inferior-lisp-program "/usr/bin/clisp")
-                 (setq slime-contribs '(slime-fancy))))
+;;  (use-package slime
+;;   ;; :ensure t
+;;    :defer t
+;;;;    :load-path "~/.guix-profile/share/emacs/site-lisp/slime-2.28-1.735258a"
+;;    :init
+;;    (require 'slime-autoloads)
+;;    (setq inferior-lisp-program "~/.guix-profile/bin/sbcl --dynamic-space-size 16384")
+;;    (setq slime-contribs '(slime-fancy slime-scratch slime-asdf slime-company)))
+#+end_src
 
+** SLIME-Company
+
+#+begin_src emacs-lisp
+;;(use-package slime-company
+;;;;  :ensure t
+;;;;  :load-path "~/.guix-profile/share/emacs/site-lisp/slime-company-1.6"
+;;  :defer t
+;;  :after (slime company)
+;;  :config (setq slime-company-completion 'fuzzy
+;;                slime-company-after-completion 'slime-company-just-one-space))
+#+end_src
+
+
+** Sly
+
+#+begin_src emacs-lisp
+(use-package sly-autoloads
+  :defer t
+  ;:load-path "~/.guix-profile/share/emacs/site-lisp/sly-1.0.43-8.df62aba"
+  :config
+  (setq inferior-lisp-program "~/.guix-profile/bin/sbcl"))
+#+end_src
+
+** Sly-ASDF
+#+begin_src emacs-lisp
+(use-package sly-asdf
+  ;;:ensure t
+  :defer t
+  ;:load-path "~/.guix-profile/share/emacs/site-lisp/sly-asdf-0.2.0"
+  :after sly
+  :config (add-to-list 'sly-contribs 'sly-asdf 'append)
+  )
 #+end_src
 
 ** Geiser
@@ -929,8 +1008,13 @@ We want a good racket workspace
 #+begin_src emacs-lisp
 (use-package geiser
   :ensure t
-  :config
-  (setq geiser-active-implementations '(racket)))
+  )
+#+end_src
+
+*** Geiser Guile
+#+begin_src emacs-lisp
+(use-package geiser-guile
+  :ensure t)
 #+end_src
 
 ** Hy
@@ -942,9 +1026,8 @@ We want a good racket workspace
 
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
+  ;;:ensure t
   :config (global-set-key (kbd "C-x g") 'magit-status))
-
 #+end_src
 
 ** flycheck
@@ -953,7 +1036,8 @@ We want a good racket workspace
 (use-package flycheck
   :ensure t
   :diminish flycheck-mode
-  :init (global-flycheck-mode))
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 #+end_src
 
 
@@ -1017,7 +1101,44 @@ we use ESS for R
   :ensure t)
 #+end_src
 
+
+** Prettify Symbols Mode
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook (lambda ()
+                            (setq prettify-symbols-alist '(("lambda" . 955)
+                                                           (">=" . ?≥)
+                                                           ("<=" . ?≤)
+                                                           ("->" . ?→)
+                                                           ("<-" . ?← )
+                                                           ("->>" . ?↠)
+                                                           ("<<-" . ?↞)
+                                                           ("[ ]" . ?☐)
+                                                           ("[X]" . ?☑)
+                                                           ))
+                            (prettify-symbols-mode 1)))
+#+end_src
+
+** envrc
+#+begin_src emacs-lisp
+(use-package envrc
+;; :load-path "~/.guix-profile/share/emacs/site-lisp/envrc-0.6"
+ :config
+ (envrc-global-mode))
+#+end_src
+** csv-mode
+#+begin_src emacs-lisp :results silent
+(use-package csv-mode)
+
+#+end_src
 * Org-Mode Settings
+** org-contrib
+I need this because ob-ledger is in this repository
+#+begin_src emacs-lisp :results silent
+(use-package org-contrib
+;;  :load-path "~/.guix-profile/share/emacs/site-lisp/org-contrib-0.4.2"
+)
+#+end_src
+
 ** org easy templates
 This section maybe gets removed but I lost the org easy templates
 
@@ -1089,6 +1210,13 @@ we want koma script
                '("europecv" "\\documentclass[utf8,a4Paper, 10pt, helvetica,narrow,flagWB, booktabs,totpages,german]{europevc}")))
 #+end_src
 
+** org-cv
+
+#+begin_src emacs-lisp
+;;(use-package org-cv
+;;  :load-path "~/.guix-profile/share/emacs/site-lisp/org-cv-0-0.24bcd82"
+;;  :init (require 'ox-altacv))
+#+end_src
 ** ACMART
 
 #+begin_src emacs-lisp
@@ -1128,9 +1256,10 @@ For easier writing i will use literal links
 
 #+begin_src emacs-lisp
 (setq org-agenda-files '("~/Dokumente/org-documents/agenda.org"
-                         "~/Dokumente/ZHAW-Scansor-Projekt/scansor-project.org"
-                         "~/Dokumente/org-documents/irm-agenda.org"
-                         "~/Dokumente/org-documents/zhaw-agenda.org"))
+;;                         "~/Dokumente/ZHAW-Scansor-Projekt/scansor-project.org"
+ ;;                        "~/Dokumente/org-documents/irm-agenda.org"
+;;                         "~/Dokumente/org-documents/zhaw-agenda.org"
+                         ))
 #+end_src
 
 ** Bibtex settings
@@ -1219,6 +1348,17 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
   (setq org-noter-notes-search-path (list my-default-bibnotes))
   :bind ("C-c i" . 'org-noter-insert-note))
 #+end_src
+** Nov
+#+begin_src emacs-lisp
+(use-package nov
+  :ensure t)
+#+end_src
+
+** djvu
+#+begin_src emacs-lisp
+
+#+end_src
+
 
 ** helm bibtex
 #+begin_src emacs-lisp
@@ -1257,10 +1397,11 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 ** Org mu4e
 
 #+begin_src emacs-lisp
-(use-package org-mu4e)
+(use-package mu4e-org)
 #+end_src
 
 ** OrgMsg
+
    #+begin_src emacs-lisp
 (use-package org-msg
   :ensure t
@@ -1295,6 +1436,15 @@ Raffael
     (when (assoc 'line-height (caddr cur))
       (setf (alist-get 'line-height (caddr cur)) "1.5em")))))
    #+end_src
+
+for now use also the mu4e-compat package
+#+begin_src emacs-lisp
+;;(use-package mu4e-compat
+;;  :load-path "~/.emacs.d/elpa/mu4e-compat"
+;;  :config
+;;  (mu4e-compat-define-aliases-backwards))
+#+end_src
+
 
 ** enable Markdown export
 
@@ -1608,6 +1758,13 @@ The buffer should be emtpy"
   (new-blog-entry-skel))
 #+end_src
 
+
+* Emacs anywhere
+#+begin_src emacs-lisp
+(use-package emacs-everywhere
+;;  :load-path "~/.guix-profile/share/emacs/site-lisp/everywhere-0.0.1-0.ace5339"
+)
+#+end_src
 
 * EXWM
 
