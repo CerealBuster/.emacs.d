@@ -1,4 +1,5 @@
 #+startup: overview indent
+#+auto_tangle: t
 #+TITLE: Emacs configuration
 #+AUTHOR: Raffael Golomingi
 
@@ -29,11 +30,41 @@ I want to auto update packages. The default is every 7 days.
 
 * Guix
 
-I will use more and more Guix as my way to get packages wo we can do this
+I will use more and more Guix as my way to install and manage emacs packages.
+I copied this workflow from Alains emacs config [[https://github.com/munen/emacs.d/tree/master]]
+
+We make a manifest and with noweb-ref add each package.
+
+#+begin_src fundamental :tangle ~/.config/guix/manifests/emacs.scm :mkdirp t :noweb yes
+  (specifications->manifest
+   '("emacs"
+     <<packages>>
+  ))
+#+end_src
+
+Emacs needs to know where the emacs-packages are.
+
 #+begin_src emacs-lisp
-(let ((default-directory  "~/.guix-profile/share/emacs/site-lisp/"))
+(let ((default-directory  "~/.guix-extra-profiles/emacs/share/emacs/site-lisp"))
   (normal-top-level-add-subdirs-to-load-path))
 #+end_src
+
+Also i create an extra profile on guix to have my emacs manifest and packages
+separated from my main profile.
+
+#+begin_src sh
+EMACS_PROFILE="$HOME/.guix-extra-profiles/emacs"
+[ -f "$EMACS_PROFILE/etc/profile" ] && . "$EMACS_PROFILE/etc/profile"
+#+end_src
+
+
+Now i can install/upgrade the packages with the command below.
+#+begin_src  sh
+guix package -m ~/.config/guix/manifests/emacs.scm -p ~/.guix-extra-profiles/emacs
+#+end_src
+
+#+RESULTS:
+
 * Default settings
 
 ** UTF-8 Please
@@ -166,6 +197,10 @@ I like to have a ruler at the top of my windows.
 #+end_src
 
 ** auto completion
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-company"
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package company
@@ -336,9 +371,13 @@ This needs to be done so I can enter passwords in the minibuffer
 
 * Projectile
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-projectile"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package projectile
-  :ensure t
+;;  :ensure t
   :defer t
   :diminish projectile-mode
   :config
@@ -347,12 +386,16 @@ This needs to be done so I can enter passwords in the minibuffer
 
 * Helm
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-helm"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package helm
-  :ensure t
+ ;;:ensure t
   :diminish helm-mode
   :init
-  (require 'helm-config)
+  (require 'helm-autoloads)
   :config
   (helm-mode 1)
   ;;(setq helm-autoresize-mode t)
@@ -366,12 +409,16 @@ This needs to be done so I can enter passwords in the minibuffer
 
 ** Helm projectile
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-helm-projectile"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package helm-projectile
   :bind (("C-S-P" . helm-projectile-switch-project)
          :map evil-normal-state-map
          ("C-p" . helm-projectile))
-  :ensure t
+ ;; :ensure t
   :config
   (evil-leader/set-key
     "ps" 'helm-projectile-ag
@@ -557,6 +604,10 @@ up :-)
 #+end_src
 
 * mu4e
+
+#+begin_src fundamental :noweb-ref packages
+  "mu"
+#+end_src
 
 #+begin_src emacs-lisp
 (require 'smtpmail)
@@ -909,7 +960,7 @@ Realgud is a frontend for external debuggers.
           scheme-mode
           geiser-repl-mode
           slime-repl-mode
-          sly-repl-mode
+          sly-mrepl-mode
           hy-mode
           clojure-mode
           cider-repl-mode
@@ -941,6 +992,10 @@ Realgud is a frontend for external debuggers.
 #+end_src
 
 ** Cider
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-cider"
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package cider
@@ -982,19 +1037,28 @@ Realgud is a frontend for external debuggers.
 
 ** Sly
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-sly"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package sly-autoloads
-  :defer t
+  ;;:defer t
   ;:load-path "~/.guix-profile/share/emacs/site-lisp/sly-1.0.43-8.df62aba"
   :config
   (setq inferior-lisp-program "~/.guix-profile/bin/sbcl"))
 #+end_src
 
 ** Sly-ASDF
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-sly-asdf"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package sly-asdf
   ;;:ensure t
-  :defer t
+  ;;:defer t
   ;:load-path "~/.guix-profile/share/emacs/site-lisp/sly-asdf-0.2.0"
   :after sly
   :config (add-to-list 'sly-contribs 'sly-asdf 'append)
@@ -1024,12 +1088,34 @@ We want a good racket workspace
 #+end_src
 ** Magit
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-magit"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package magit
   ;;:ensure t
-  :config (global-set-key (kbd "C-x g") 'magit-status))
+ ;; :config (global-set-key (kbd "C-x g") 'magit-status)
+  )
 #+end_src
 
+** Forge
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-forge"
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package forge
+  :after magit
+  :config
+  (push '("gitlab.uzh.ch"               ; GITHOST
+        "gitlab.uzh.ch/api/v4"        ; APIHOST
+        "gitlab.uzh.ch"               ; WEBHOST and INSTANCE-ID
+        forge-gitlab-repository)    ; CLASS
+      forge-alist)
+)
+#+end_src
 ** flycheck
 
 #+begin_src emacs-lisp
@@ -1069,9 +1155,13 @@ we use ESS for R
 
 ** Jupyter support
 
+#+begin_src fundamental :noweb-ref packages
+  "emacs-ein"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package ein
-  :ensure t
+ ;; :ensure t
   :defer t)
 #+end_src
 
@@ -1119,6 +1209,11 @@ we use ESS for R
 #+end_src
 
 ** envrc
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-envrc"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package envrc
 ;; :load-path "~/.guix-profile/share/emacs/site-lisp/envrc-0.6"
@@ -1126,6 +1221,11 @@ we use ESS for R
  (envrc-global-mode))
 #+end_src
 ** csv-mode
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-csv-mode"
+#+end_src
+
 #+begin_src emacs-lisp :results silent
 (use-package csv-mode)
 
@@ -1133,6 +1233,11 @@ we use ESS for R
 * Org-Mode Settings
 ** org-contrib
 I need this because ob-ledger is in this repository
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-org-contrib"
+#+end_src
+
 #+begin_src emacs-lisp :results silent
 (use-package org-contrib
 ;;  :load-path "~/.guix-profile/share/emacs/site-lisp/org-contrib-0.4.2"
@@ -1361,9 +1466,15 @@ entry. Look at help:bibtex-generate-autokey to understand the settings
 
 
 ** helm bibtex
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-helm-bibtex"
+#+end_src
+
+
 #+begin_src emacs-lisp
 (use-package helm-bibtex
-  :ensure t
+  ;:ensure t
   :commands helm-bibtex
   :config
   (setq helm-bibtex-bibliography my-default-bibfile ;; where your references are stored
@@ -1588,6 +1699,21 @@ I prefer that org uses emacs to visit pdfs
                       ("\\.pdf\\'" . emacs)))
 #+end_src
 
+
+** org-auto-tangle
+
+I like literate programming and use it often. calling C-v C-t every fine but
+having the option to run it automatically when saving an org file is cool.
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-org-auto-tangle"
+#+end_src
+
+#+begin_src emacs-lisp
+  (require 'org-auto-tangle)
+  (add-hook 'org-mode-hook 'org-auto-tangle-mode)
+#+end_src
+
 * Golden Ratio
 
 #+begin_src emacs-lisp
@@ -1760,6 +1886,11 @@ The buffer should be emtpy"
 
 
 * Emacs anywhere
+
+#+begin_src fundamental :noweb-ref packages
+  "emacs-everywhere"
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package emacs-everywhere
 ;;  :load-path "~/.guix-profile/share/emacs/site-lisp/everywhere-0.0.1-0.ace5339"
