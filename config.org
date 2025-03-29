@@ -22,10 +22,11 @@ I want to auto update packages. The default is every 7 days.
 (use-package auto-package-update
   :ensure t
   :config
+  (setq auto-package-update-prompt-before-update t)
+  (setq auto-package-update-interval 7)
   (setq auto-package-update-delete-old-versions t)
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
-
 #+end_src
 
 * Guix
@@ -378,7 +379,7 @@ This needs to be done so I can enter passwords in the minibuffer
 #+begin_src emacs-lisp
 (use-package projectile
 ;;  :ensure t
-  :defer t
+;;  :defer t
   :diminish projectile-mode
   :config
   (projectile-global-mode))
@@ -579,9 +580,14 @@ up :-)
 
 * Dashboard
 
+#+begin_src fundamental :noweb-ref packages
+"emacs-dashboard"
+#+end_src
+
+
 #+begin_src emacs-lisp
 (use-package dashboard
-  :ensure t
+  ;:ensure t
   :config
   (dashboard-setup-startup-hook)
   (setq dashboard-filter-agenda-entry 'dashboard-filter-agenda-by-todo)
@@ -1305,6 +1311,12 @@ we want koma script
                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
+#+end_src
+
+** Koma-letter export
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (require 'ox-koma-letter nil t))
 #+end_src
 
 ** eurpecv-class
