@@ -1071,6 +1071,20 @@ Realgud is a frontend for external debuggers.
   )
 #+end_src
 
+** SLITE
+Slime test runner for Test Driven Development with CL.
+
+#+begin_src fundamental :noweb-ref packages
+"emacs-slite"
+#+end_src
+
+#+begin_src emacs-lisp :results silent
+(use-package slite
+  :after sly
+  :config
+  (define-key sly-mode-map (kbd "C-c v") #'slite-run))
+#+end_src
+
 ** Geiser
 
 We want a good racket workspace
