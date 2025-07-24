@@ -39,6 +39,7 @@ We make a manifest and with noweb-ref add each package.
 #+begin_src fundamental :tangle ~/.config/guix/manifests/emacs.scm :mkdirp t :noweb yes
   (specifications->manifest
    '("emacs"
+     "emacs-pgtk"
      <<packages>>
   ))
 #+end_src
@@ -294,6 +295,19 @@ This needs to be done so I can enter passwords in the minibuffer
 #+begin_src emacs-lisp
 (setq epg-pinentry-mode 'ask)
 #+end_src
+** Scrollig mode
+Better scrolling
+#+begin_src
+(pixel-scroll-precision-mode)
+#+end_src
+
+** let emacs recognize foots terminfo
+
+#+begin_src emacs-lisp
+(add-to-list 'term-file-aliases '("foot" . "xterm"))
+(add-to-list 'term-file-aliases '("foot-extra" . "xterm"))
+#+end_src
+
 * Unicode fonts
 #+begin_src emacs-lisp
 (use-package unicode-fonts
@@ -802,6 +816,8 @@ also easy swich between english and german
   (setq languagetool-java-arguments '("-Dfile.encoding=UTF-8")
         languagetool-console-command "~/.languagetool/languagetool-commandline.jar"
         languagetool-server-command "~/.languagetool/languagetool-server.jar"
+        languagetool-console-arguments '("--languagemodel" "/usr/share/ngrams")
+        languagetool-server-arguments  '("--languagemodel" "/usr/share/ngrams")
         languagetool-mother-tongue t
         languagetool-default-language "de-CH")
   (global-set-key (kbd "C-c l c") 'languagetool-check)
